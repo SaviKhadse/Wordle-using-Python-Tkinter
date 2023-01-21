@@ -1,9 +1,9 @@
 from argparse import _CountAction
+from operator import length_hint
 import random
 
 global tmpAnswer
-global length
-global tmpChoice
+global tmpRandomChoice
 global listAns
 global countC
 global countI
@@ -15,35 +15,46 @@ class WordleClass:
     def __init__(self):
         print("Hello, this is class mysqlCon from file testdbfile...")
 
-    #This code is to get final word list from file.
-    listAns=[]
-    file=open("C:\\Users\ma29h\Downloads\wordle.txt","r")
-    str=file.read().split('\n')
 
-    listAns=str
-    file.close()
-    print(listAns)
-    #End of the code.
+    def getNewFinalWord():
+        global listAns
+        global tmpRandomChoice
+        global listFinal
+        #This code is to get final word list from file.
+        listAns=[]
+        file=open("C:\\Users\ma29h\Downloads\wordle.txt","r")
+        str=file.read().split('\n')
 
-    #Generating random number's word for today's game.
-    tmpRandomChoice=random.randrange(0,4)
+        listAns=str
+        file.close()
+        print(listAns)
+        #End of the code.
 
-    #Random generated word length is here.
+        #Generating random number's word for today's game.
+        tmpRandomChoice=random.randrange(0,4)
 
+        #This to store random generated word for Game.
+        i=1
+        global finalWord
+        finalWord=listAns[tmpRandomChoice]
+        global listFinal
+        listFinal=[]
+        listFinal.clear()
+        for i in range(4):
+            listFinal.append(finalWord[i])
+            print(listFinal)
+        return finalWord
 
-    #This to store random generated word for Game.
-    i=1
-    finalWord=listAns[tmpRandomChoice]
-    global listFinal
-    listFinal=[]
-    listFinal.clear()
-    for i in range(4):
-        listFinal.append(finalWord[i])
-        print(listFinal)
+    def getCorrectAnswer():
+        global finalWord
+        print(f"Correct Answer = {finalWord}")
+        return finalWord
+
 
 
     def fnStoreUserInputList(tmpAnswer):
         #Here, starting the storing user input in list from here.
+        global listFinal
         global listUserAns
         listUserAns=[]
         listUserAns.clear()
