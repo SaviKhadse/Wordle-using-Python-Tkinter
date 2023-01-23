@@ -1,5 +1,5 @@
 from logging import exception
-# from sqlite3 import Cursor
+#from sqlite3 import Cursor
 from mysql.connector.cursor import MySQLCursor
 
 class mysqlCon:
@@ -9,18 +9,18 @@ class mysqlCon:
         #    The __init__ method lets the class initialize the object's attributes and serves no other purpose. It is only used within classes
         print("Hello, this is as an initializer method of class mysqlCon ...")
 
-    def fndbconn():
+    def fndbconn(self):
         global conn
         # We import the connector class from MySql.
         import mysql.connector as mysqlConnector
         conn = mysqlConnector.connect(
-            host='localhost', user='root', password='sagar@123', database='testdb')  # We access the connect method through the connector class, which we already import into our program. Now, we are passing our connection parameters to the connect method. The user name and password will be different according to your installation process.
+            host='localhost', user='root', password='Sagar@2602', database='PythonWordle')  # We access the connect method through the connector class, which we already import into our program. Now, we are passing our connection parameters to the connect method. The user name and password will be different according to your installation process.
         if conn:
             return 1
         else:
             return 0
 
-    def fnLogin(tmpuser, tmppass):
+    def fnLogin(self, tmpuser, tmppass):
         global conn
         # We imported the cursor method from the established connection (conn) object and created the cursor object (mycursor).
         mycursor = conn.cursor()
