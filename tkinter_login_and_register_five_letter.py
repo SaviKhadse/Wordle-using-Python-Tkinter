@@ -15,10 +15,8 @@ import random
 #Global Variable Declaration.
 global tmpAnswer
 global tmpRandomChoice
+tempCount = 1      # This variable to call word to check as per the attempts.
 
-global tempCount  # This variable to call word to check as per the attempts.
-tempCount = 1
-global nextlevelframe
 
 # importing database class from file name called "tkinter_dbconeection_file.py"
 class WordleClass(mysqlCon):
@@ -30,7 +28,7 @@ class WordleClass(mysqlCon):
         global tmpRandomChoice
         # This code is to get final word list from file.
         self.listAns = []
-        file = open("/Users/sagartandel/Documents/Sagar Study/OOPJ and Python/Final Version/wordle.txt","r")
+        file = open("/Users/sagartandel/Documents/Sagar Study/OOPJ and Python/Final Project/07-14-22/wordle.txt","r")
         self.listAns = file.read().split('\n')
         file.close()
         
@@ -138,6 +136,21 @@ class RegisterClass(mysqlCon):
             "Success!", "Welcome! Registration Done Suceessfully..")
         register_screen.destroy()
 
+    def fnUIWordle(self):
+        L1 = Label(self.topframe, text="W", font=("Apple, 25"), bg="#8FDE21", width=2)
+        L2 = Label(self.topframe, text="O", font=("Apple, 25"), bg="#8FDE21", width=2)
+        L3 = Label(self.topframe, text="R", font=("Apple, 25"), bg="#8FDE21", width=2)
+        L4 = Label(self.topframe, text="D", font=("Apple, 25"), bg="#8FDE21", width=2)
+        L5 = Label(self.topframe, text="L", font=("Apple, 25"), bg="#8FDE21", width=2)
+        L6 = Label(self.topframe, text="E", font=("Apple, 25"), bg="#8FDE21", width=2)
+        L6.pack(side=RIGHT, padx=3, pady=10)
+        L5.pack(side=RIGHT, padx=3)
+        L4.pack(side=RIGHT, padx=3)
+        L3.pack(side=RIGHT, padx=3)
+        L2.pack(side=RIGHT, padx=3)
+        L1.pack(side=RIGHT, padx=3)
+
+
     # Designing window for registration
     def register(self):
         global register_screen
@@ -149,8 +162,8 @@ class RegisterClass(mysqlCon):
         iframe = Frame(register_screen)
         iframe.pack()
 
-        topframe = Frame(register_screen)
-        topframe.pack()
+        self.topframe = Frame(register_screen)
+        self.topframe.pack()
 
         mframe = Frame(register_screen)
         mframe.pack()
@@ -158,18 +171,7 @@ class RegisterClass(mysqlCon):
         L1 = Label(iframe, font=("Apple, 10"))
         L1.pack()
 
-        L1 = Label(topframe, text="W", font=("Apple, 25"), bg="#8FDE21", width=2)
-        L2 = Label(topframe, text="O", font=("Apple, 25"), bg="#8FDE21", width=2)
-        L3 = Label(topframe, text="R", font=("Apple, 25"), bg="#8FDE21", width=2)
-        L4 = Label(topframe, text="D", font=("Apple, 25"), bg="#8FDE21", width=2)
-        L5 = Label(topframe, text="L", font=("Apple, 25"), bg="#8FDE21", width=2)
-        L6 = Label(topframe, text="E", font=("Apple, 25"), bg="#8FDE21", width=2)
-        L6.pack(side=RIGHT, padx=3, pady=10)
-        L5.pack(side=RIGHT, padx=3)
-        L4.pack(side=RIGHT, padx=3)
-        L3.pack(side=RIGHT, padx=3)
-        L2.pack(side=RIGHT, padx=3)
-        L1.pack(side=RIGHT, padx=3)
+        self.fnUIWordle()       #Calling method of RegisterClass to create UI of "WORDLE" word so no need to repeat this task again and again.
 
         L1 = Label(mframe, font=("Apple, 10"))
         L1.pack()
@@ -208,7 +210,7 @@ class RegisterClass(mysqlCon):
 
 
 #This class is for the Login Page.
-class LoginClass(mysqlCon):
+class LoginClass(RegisterClass):
     # Designing window for login.
     def login(self):
         global login_screen
@@ -220,8 +222,8 @@ class LoginClass(mysqlCon):
         iframe = Frame(login_screen)
         iframe.pack()
 
-        topframe = Frame(login_screen)
-        topframe.pack()
+        self.topframe = Frame(login_screen)
+        self.topframe.pack()
 
         mframe = Frame(login_screen)
         mframe.pack()
@@ -229,18 +231,7 @@ class LoginClass(mysqlCon):
         L1 = Label(iframe, font=("Apple, 10"))
         L1.pack()
 
-        L1 = Label(topframe, text="W", font=("Apple, 25"), bg="#8FDE21", width=2)
-        L2 = Label(topframe, text="O", font=("Apple, 25"), bg="#8FDE21", width=2)
-        L3 = Label(topframe, text="R", font=("Apple, 25"), bg="#8FDE21", width=2)
-        L4 = Label(topframe, text="D", font=("Apple, 25"), bg="#8FDE21", width=2)
-        L5 = Label(topframe, text="L", font=("Apple, 25"), bg="#8FDE21", width=2)
-        L6 = Label(topframe, text="E", font=("Apple, 25"), bg="#8FDE21", width=2)
-        L6.pack(side=RIGHT, padx=3, pady=10)
-        L5.pack(side=RIGHT, padx=3)
-        L4.pack(side=RIGHT, padx=3)
-        L3.pack(side=RIGHT, padx=3)
-        L2.pack(side=RIGHT, padx=3)
-        L1.pack(side=RIGHT, padx=3)
+        self.fnUIWordle()       #Calling method of RegisterClass to create UI of "WORDLE" word so no need to repeat this task again and again.
 
         L1 = Label(mframe, font=("Apple, 10"))
         L1.pack()
@@ -308,21 +299,14 @@ class UserAttemptClass(WordleClass):
     def fnCheckAttemptNo(self):
         # Using global variables to access in this function.
         global tmpLabel
-        global tempCount
         global wordle_screen
-        global nextlevelframe
-        global tmpLabel
         # End
 
         # Checking attempt and then to check the user answer with final answer.
-        print(f"Attempt# = {tempCount}")
+        print(f"Attempt# = {self.tempCount}")
         # --- For First attempt ----
-        if tempCount == 1:
-            row1e1_info = row1e1_entry.get()
-            row1e2_info = row1e2_entry.get()
-            row1e3_info = row1e3_entry.get()
-            row1e4_info = row1e4_entry.get()
-            row1e5_info = row1e5_entry.get()
+        if self.tempCount == 1:
+            tmpAnswer = row1e1_entry.get() + row1e2_entry.get() + row1e3_entry.get() + row1e4_entry.get() + row1e5_entry.get()
 
             row1e1_entry.config(state="disabled")
             row1e2_entry.config(state="disabled")
@@ -330,10 +314,9 @@ class UserAttemptClass(WordleClass):
             row1e4_entry.config(state="disabled")
             row1e5_entry.config(state="disabled")
 
-            tmpAnswer = row1e1_info + row1e2_info + row1e3_info + row1e4_info + row1e5_info
             print(f"User's answer = {tmpAnswer}")
             greenList, yellowList, greyList = self.fnStoreUserInputList(
-                tmpAnswer)
+                tmpAnswer.upper())
             print(greenList)
             print(yellowList)
             print(greyList)
@@ -405,15 +388,11 @@ class UserAttemptClass(WordleClass):
                 tmpLabel = Label(
                     wordle_screen, text="Incorrect Answer. Try Again.", fg="green", font=("calibri", 11))
                 tmpLabel.pack()
-                tempCount += 1
+                self.tempCount += 1
 
         # --- For second attempt ----
-        elif tempCount == 2:
-            row2e1_info = row2e1_entry.get()
-            row2e2_info = row2e2_entry.get()
-            row2e3_info = row2e3_entry.get()
-            row2e4_info = row2e4_entry.get()
-            row2e5_info = row2e5_entry.get()
+        elif self.tempCount == 2:
+            tmpAnswer = row2e1_entry.get() + row2e2_entry.get() + row2e3_entry.get() + row2e4_entry.get() + row2e5_entry.get()
 
             row2e1_entry.config(state="disabled")
             row2e2_entry.config(state="disabled")
@@ -421,10 +400,9 @@ class UserAttemptClass(WordleClass):
             row2e4_entry.config(state="disabled")
             row2e5_entry.config(state="disabled")
 
-            tmpAnswer = row2e1_info + row2e2_info + row2e3_info + row2e4_info + row2e5_info
             print(f"User's answer = {tmpAnswer}")
             greenList, yellowList, greyList = self.fnStoreUserInputList(
-                tmpAnswer)
+                tmpAnswer.upper())
             print(greenList)
             print(yellowList)
             print(greyList)
@@ -497,15 +475,11 @@ class UserAttemptClass(WordleClass):
                 tmpLabel = Label(
                     wordle_screen, text="Incorrect Answer. Try Again.", fg="green", font=("calibri", 11))
                 tmpLabel.pack()
-                tempCount += 1
+                self.tempCount += 1
 
         # ----- For third attempt ------
-        elif tempCount == 3:
-            row3e1_info = row3e1_entry.get()
-            row3e2_info = row3e2_entry.get()
-            row3e3_info = row3e3_entry.get()
-            row3e4_info = row3e4_entry.get()
-            row3e5_info = row3e5_entry.get()
+        elif self.tempCount == 3:
+            tmpAnswer = row3e1_entry.get() + row3e2_entry.get() + row3e3_entry.get() + row3e4_entry.get() + row3e5_entry.get()
 
             row3e1_entry.config(state="disabled")
             row3e2_entry.config(state="disabled")
@@ -513,10 +487,9 @@ class UserAttemptClass(WordleClass):
             row3e4_entry.config(state="disabled")
             row3e5_entry.config(state="disabled")
 
-            tmpAnswer = row3e1_info + row3e2_info + row3e3_info + row3e4_info + row3e5_info
             print(f"User's answer = {tmpAnswer}")
             greenList, yellowList, greyList = self.fnStoreUserInputList(
-                tmpAnswer)
+                tmpAnswer.upper())
             print(greenList)
             print(yellowList)
             print(greyList)
@@ -589,15 +562,11 @@ class UserAttemptClass(WordleClass):
                 tmpLabel = Label(
                     wordle_screen, text="Incorrect Answer. Try Again.", fg="green", font=("calibri", 11))
                 tmpLabel.pack()
-                tempCount += 1
+                self.tempCount += 1
 
         # Checking for FORTH attempt ----.
-        elif tempCount == 4:
-            row4e1_info = row4e1_entry.get()
-            row4e2_info = row4e2_entry.get()
-            row4e3_info = row4e3_entry.get()
-            row4e4_info = row4e4_entry.get()
-            row4e5_info = row4e5_entry.get()
+        elif self.tempCount == 4:
+            tmpAnswer = row4e1_entry.get() + row4e2_entry.get() + row4e3_entry.get() + row4e4_entry.get() + row4e5_entry.get()
 
             row4e1_entry.config(state="disabled")
             row4e2_entry.config(state="disabled")
@@ -605,10 +574,9 @@ class UserAttemptClass(WordleClass):
             row4e4_entry.config(state="disabled")
             row4e5_entry.config(state="disabled")
 
-            tmpAnswer = row4e1_info + row4e2_info + row4e3_info + row4e4_info + row4e5_info
             print(f"User's answer = {tmpAnswer}")
             greenList, yellowList, greyList = self.fnStoreUserInputList(
-                tmpAnswer)
+                tmpAnswer.upper())
             print(greenList)
             print(yellowList)
             print(greyList)
@@ -681,15 +649,11 @@ class UserAttemptClass(WordleClass):
                 tmpLabel = Label(
                     wordle_screen, text="Incorrect Answer. Try Again.", fg="green", font=("calibri", 11))
                 tmpLabel.pack()
-                tempCount += 1
+                self.tempCount += 1
 
         # Checking for FIFTH attempt ----.
-        elif tempCount == 5:
-            row5e1_info = row5e1_entry.get()
-            row5e2_info = row5e2_entry.get()
-            row5e3_info = row5e3_entry.get()
-            row5e4_info = row5e4_entry.get()
-            row5e5_info = row5e5_entry.get()
+        elif self.tempCount == 5:
+            tmpAnswer = row5e1_entry.get() + row5e2_entry.get() + row5e3_entry.get() + row5e4_entry.get() + row5e5_entry.get()
 
             row5e1_entry.config(state="disabled")
             row5e2_entry.config(state="disabled")
@@ -697,10 +661,9 @@ class UserAttemptClass(WordleClass):
             row5e4_entry.config(state="disabled")
             row5e5_entry.config(state="disabled")
 
-            tmpAnswer = row5e1_info + row5e2_info + row5e3_info + row5e4_info + row5e5_info
             print(f"User's answer = {tmpAnswer}")
             greenList, yellowList, greyList = self.fnStoreUserInputList(
-                tmpAnswer)
+                tmpAnswer.upper())
             print(greenList)
             print(yellowList)
             print(greyList)
@@ -773,15 +736,11 @@ class UserAttemptClass(WordleClass):
                 tmpLabel = Label(
                     wordle_screen, text="Incorrect Answer. Try Again.", fg="green", font=("calibri", 11))
                 tmpLabel.pack()
-                tempCount += 1
+                self.tempCount += 1
 
         # Checking for SIXTH attempt ----.
-        elif tempCount == 6:
-            row6e1_info = row6e1_entry.get()
-            row6e2_info = row6e2_entry.get()
-            row6e3_info = row6e3_entry.get()
-            row6e4_info = row6e4_entry.get()
-            row6e5_info = row6e5_entry.get()
+        elif self.tempCount == 6:
+            tmpAnswer = row6e1_entry.get() + row6e2_entry.get() + row6e3_entry.get() + row6e4_entry.get() + row6e5_entry.get()
 
             row6e1_entry.config(state="disabled")
             row6e2_entry.config(state="disabled")
@@ -789,10 +748,9 @@ class UserAttemptClass(WordleClass):
             row6e4_entry.config(state="disabled")
             row6e5_entry.config(state="disabled")
 
-            tmpAnswer = row6e1_info + row6e2_info + row6e3_info + row6e4_info + row6e5_info
             print(f"User's answer = {tmpAnswer}")
             greenList, yellowList, greyList = self.fnStoreUserInputList(
-                tmpAnswer)
+                tmpAnswer.upper())
             print(greenList)
             print(yellowList)
             print(greyList)
@@ -885,7 +843,7 @@ class UserAttemptClass(WordleClass):
                 btnNextLevel.place(relx=0.0, rely=1.0, anchor='sw')
                 btnNextLevel.pack()
                 btnNextLevel.config(command=self.fnNextLevel)
-                tempCount = 1
+                self.tempCount = 1
 
 
     def fnNextLevel(self):
@@ -893,7 +851,7 @@ class UserAttemptClass(WordleClass):
         wordle_screen.destroy()
         self.wordle_test()
 
-class GameMainClass(RegisterClass, LoginClass, UserAttemptClass, WordleClass):
+class GameMainClass(LoginClass, UserAttemptClass):
     # Designing Main(first) window
     def main_account_screen(self):
         global main_screen
@@ -905,8 +863,8 @@ class GameMainClass(RegisterClass, LoginClass, UserAttemptClass, WordleClass):
         iframe = Frame(main_screen)
         iframe.pack()
 
-        topframe = Frame(main_screen)
-        topframe.pack()
+        self.topframe = Frame(main_screen)
+        self.topframe.pack()
 
         mframe = Frame(main_screen)
         mframe.pack()
@@ -914,18 +872,7 @@ class GameMainClass(RegisterClass, LoginClass, UserAttemptClass, WordleClass):
         L1 = Label(iframe, font=("Apple, 10"))
         L1.pack()
 
-        L1 = Label(topframe, text="W", font=("Apple, 25"), bg="#8FDE21", width=2)
-        L2 = Label(topframe, text="O", font=("Apple, 25"), bg="#8FDE21", width=2)
-        L3 = Label(topframe, text="R", font=("Apple, 25"), bg="#8FDE21", width=2)
-        L4 = Label(topframe, text="D", font=("Apple, 25"), bg="#8FDE21", width=2)
-        L5 = Label(topframe, text="L", font=("Apple, 25"), bg="#8FDE21", width=2)
-        L6 = Label(topframe, text="E", font=("Apple, 25"), bg="#8FDE21", width=2)
-        L6.pack(side=RIGHT, padx=3, pady=10)
-        L5.pack(side=RIGHT, padx=3)
-        L4.pack(side=RIGHT, padx=3)
-        L3.pack(side=RIGHT, padx=3)
-        L2.pack(side=RIGHT, padx=3)
-        L1.pack(side=RIGHT, padx=3)
+        self.fnUIWordle()       #Calling method of RegisterClass to create UI of "WORDLE" word so no need to repeat this task again and again.
 
         L1 = Label(mframe, font=("Apple, 10"))
         L1.pack()
@@ -950,9 +897,7 @@ class GameMainClass(RegisterClass, LoginClass, UserAttemptClass, WordleClass):
     # ----- Main wordle game UI for every attemts ------.
     def wordle_test(self):
 
-        global nextlevelframe  # This frame to give next button.
-        global tempCount
-        tempCount = 1
+        self.tempCount = 1
 
         from tkinter import LEFT, RIGHT, Button, Entry, Frame, Label, StringVar, Tk, Toplevel, font
         global submitButton
@@ -962,10 +907,10 @@ class GameMainClass(RegisterClass, LoginClass, UserAttemptClass, WordleClass):
         wordle_screen.title("Wordle Game Main Screen")
         wordle_screen.geometry("400x650")
         # ---Frames are added ---.
-        topframe = Frame(wordle_screen)
-        topframe.pack()
         mframe = Frame(wordle_screen)
         mframe.pack()
+        self.topframe = Frame(wordle_screen)
+        self.topframe.pack()
         iframe = Frame(wordle_screen)
         iframe.pack()
         hintframe = Frame(wordle_screen)
@@ -987,21 +932,10 @@ class GameMainClass(RegisterClass, LoginClass, UserAttemptClass, WordleClass):
         nextlevelframe = Frame(wordle_screen)
         nextlevelframe.pack()
 
-        L1 = Label(topframe, font=("Apple, 20"), text="")
+        L1 = Label(mframe, font=("Apple, 20"), text="")
         L1.pack()
 
-        L1 = Label(mframe, text="W", font=("Apple, 25"), bg="#8FDE21", width=2)
-        L2 = Label(mframe, text="O", font=("Apple, 25"), bg="#8FDE21", width=2)
-        L3 = Label(mframe, text="R", font=("Apple, 25"), bg="#8FDE21", width=2)
-        L4 = Label(mframe, text="D", font=("Apple, 25"), bg="#8FDE21", width=2)
-        L5 = Label(mframe, text="L", font=("Apple, 25"), bg="#8FDE21", width=2)
-        L6 = Label(mframe, text="E", font=("Apple, 25"), bg="#8FDE21", width=2)
-        L6.pack(side=RIGHT, padx=3, pady=20)
-        L5.pack(side=RIGHT, padx=3)
-        L4.pack(side=RIGHT, padx=3)
-        L3.pack(side=RIGHT, padx=3)
-        L2.pack(side=RIGHT, padx=3)
-        L1.pack(side=RIGHT, padx=3)
+        self.fnUIWordle()       #Calling method of RegisterClass to create UI of "WORDLE" word so no need to repeat this task again and again.
 
         # Printing username in top right corner.
         tmpUserPrint = "Welcome " + '"' + self.username + '"'
@@ -1051,214 +985,252 @@ class GameMainClass(RegisterClass, LoginClass, UserAttemptClass, WordleClass):
 
 
         # --- Starting Wordle Game UI for FIRST row. ---.
-        global row1e1
-        global row1e2
-        global row1e3
-        global row1e4
-        global row1e5
-
         global row1e1_entry
         global row1e2_entry
         global row1e3_entry
         global row1e4_entry
         global row1e5_entry
 
-        row1e1 = StringVar()
-        row1e2 = StringVar()
-        row1e3 = StringVar()
-        row1e4 = StringVar()
-        row1e5 = StringVar()
+        self.row1e1 = StringVar()
+        self.row1e2 = StringVar()
+        self.row1e3 = StringVar()
+        self.row1e4 = StringVar()
+        self.row1e5 = StringVar()
 
-        row1e1_entry = Entry(frame1, textvariable=row1e1, width=2, font=(
+        def caps(event):
+            self.row1e1.set(self.row1e1.get().upper())
+            self.row1e2.set(self.row1e2.get().upper())
+            self.row1e3.set(self.row1e3.get().upper())
+            self.row1e4.set(self.row1e4.get().upper())
+            self.row1e5.set(self.row1e5.get().upper())
+
+            self.row2e1.set(self.row2e1.get().upper())
+            self.row2e2.set(self.row2e2.get().upper())
+            self.row2e3.set(self.row2e3.get().upper())
+            self.row2e4.set(self.row2e4.get().upper())
+            self.row2e5.set(self.row2e5.get().upper())
+
+            self.row3e1.set(self.row3e1.get().upper())
+            self.row3e2.set(self.row3e2.get().upper())
+            self.row3e3.set(self.row3e3.get().upper())
+            self.row3e4.set(self.row3e4.get().upper())
+            self.row3e5.set(self.row3e5.get().upper())
+
+            self.row4e1.set(self.row4e1.get().upper())
+            self.row4e2.set(self.row4e2.get().upper())
+            self.row4e3.set(self.row4e3.get().upper())
+            self.row4e4.set(self.row4e4.get().upper())
+            self.row4e5.set(self.row4e5.get().upper())
+
+            self.row5e1.set(self.row5e1.get().upper())
+            self.row5e2.set(self.row5e2.get().upper())
+            self.row5e3.set(self.row5e3.get().upper())
+            self.row5e4.set(self.row5e4.get().upper())
+            self.row5e5.set(self.row5e5.get().upper())
+
+            self.row6e1.set(self.row6e1.get().upper())
+            self.row6e2.set(self.row6e2.get().upper())
+            self.row6e3.set(self.row6e3.get().upper())
+            self.row6e4.set(self.row6e4.get().upper())
+            self.row6e5.set(self.row6e5.get().upper())
+
+
+        row1e1_entry = Entry(frame1, textvariable=self.row1e1, width=2, font=(
             'Geogia 20'), bg='black', fg='white', justify='center')
         row1e1_entry.pack(side=LEFT, padx=5, pady=5)
-        row1e2_entry = Entry(frame1, textvariable=row1e2, width=2, font=(
+        row1e2_entry = Entry(frame1, textvariable=self.row1e2, width=2, font=(
             'Geogia 20'), bg='black', fg='white', justify='center')
         row1e2_entry.pack(side=LEFT, padx=5, pady=5)
-        row1e3_entry = Entry(frame1, textvariable=row1e3, width=2, font=(
+        row1e3_entry = Entry(frame1, textvariable=self.row1e3, width=2, font=(
             'Geogia 20'), bg='black', fg='white', justify='center')
         row1e3_entry.pack(side=LEFT, padx=5, pady=5)
-        row1e4_entry = Entry(frame1, textvariable=row1e4, width=2, font=(
+        row1e4_entry = Entry(frame1, textvariable=self.row1e4, width=2, font=(
             'Geogia 20'), bg='black', fg='white', justify='center')
         row1e4_entry.pack(side=LEFT, padx=5, pady=5)
-        row1e5_entry = Entry(frame1, textvariable=row1e5, width=2, font=(
+        row1e5_entry = Entry(frame1, textvariable=self.row1e5, width=2, font=(
             'Geogia 20'), bg='black', fg='white', justify='center')
         row1e5_entry.pack(side=LEFT)
 
-        # --- Starting Wordle Game UI for SECOND row. ---.
-        global row2e1
-        global row2e2
-        global row2e3
-        global row2e4
-        global row2e5
+        row1e1_entry.bind('<KeyRelease>', caps)
+        row1e2_entry.bind('<KeyRelease>', caps)
+        row1e3_entry.bind('<KeyRelease>', caps)
+        row1e4_entry.bind('<KeyRelease>', caps)
+        row1e5_entry.bind('<KeyRelease>', caps)
 
+        # --- Starting Wordle Game UI for SECOND row. ---.
         global row2e1_entry
         global row2e2_entry
         global row2e3_entry
         global row2e4_entry
         global row2e5_entry
 
-        row2e1 = StringVar()
-        row2e2 = StringVar()
-        row2e3 = StringVar()
-        row2e4 = StringVar()
-        row2e5 = StringVar()
+        self.row2e1 = StringVar()
+        self.row2e2 = StringVar()
+        self.row2e3 = StringVar()
+        self.row2e4 = StringVar()
+        self.row2e5 = StringVar()
 
-        row2e1_entry = Entry(frame2, textvariable=row2e1, width=2, font=(
+        row2e1_entry = Entry(frame2, textvariable=self.row2e1, width=2, font=(
             'Geogia 20'), bg='black', fg='white', justify='center')
         row2e1_entry.pack(side=LEFT, padx=5, pady=5)
-        row2e2_entry = Entry(frame2, textvariable=row2e2, width=2, font=(
+        row2e2_entry = Entry(frame2, textvariable=self.row2e2, width=2, font=(
             'Geogia 20'), bg='black', fg='white', justify='center')
         row2e2_entry.pack(side=LEFT, padx=5, pady=5)
-        row2e3_entry = Entry(frame2, textvariable=row2e3, width=2, font=(
+        row2e3_entry = Entry(frame2, textvariable=self.row2e3, width=2, font=(
             'Geogia 20'), bg='black', fg='white', justify='center')
         row2e3_entry.pack(side=LEFT, padx=5, pady=5)
-        row2e4_entry = Entry(frame2, textvariable=row2e4, width=2, font=(
+        row2e4_entry = Entry(frame2, textvariable=self.row2e4, width=2, font=(
             'Geogia 20'), bg='black', fg='white', justify='center')
         row2e4_entry.pack(side=LEFT, padx=5, pady=5)
-        row2e5_entry = Entry(frame2, textvariable=row2e5, width=2, font=(
+        row2e5_entry = Entry(frame2, textvariable=self.row2e5, width=2, font=(
             'Geogia 20'), bg='black', fg='white', justify='center')
         row2e5_entry.pack(side=LEFT)
 
-        # --- Starting Wordle Game UI for THIRD row. ---.
-        global row3e1
-        global row3e2
-        global row3e3
-        global row3e4
-        global row3e5
+        row2e1_entry.bind('<KeyRelease>', caps)
+        row2e2_entry.bind('<KeyRelease>', caps)
+        row2e3_entry.bind('<KeyRelease>', caps)
+        row2e4_entry.bind('<KeyRelease>', caps)
+        row2e5_entry.bind('<KeyRelease>', caps)
 
+        # --- Starting Wordle Game UI for THIRD row. ---.
         global row3e1_entry
         global row3e2_entry
         global row3e3_entry
         global row3e4_entry
         global row3e5_entry
 
-        row3e1 = StringVar()
-        row3e2 = StringVar()
-        row3e3 = StringVar()
-        row3e4 = StringVar()
-        row3e5 = StringVar()
+        self.row3e1 = StringVar()
+        self.row3e2 = StringVar()
+        self.row3e3 = StringVar()
+        self.row3e4 = StringVar()
+        self.row3e5 = StringVar()
 
-        row3e1_entry = Entry(frame3, textvariable=row3e1, width=2, font=(
+        row3e1_entry = Entry(frame3, textvariable=self.row3e1, width=2, font=(
             'Geogia 20'), bg='black', fg='white', justify='center')
         row3e1_entry.pack(side=LEFT, padx=5, pady=5)
-        row3e2_entry = Entry(frame3, textvariable=row3e2, width=2, font=(
+        row3e2_entry = Entry(frame3, textvariable=self.row3e2, width=2, font=(
             'Geogia 20'), bg='black', fg='white', justify='center')
         row3e2_entry.pack(side=LEFT, padx=5, pady=5)
-        row3e3_entry = Entry(frame3, textvariable=row3e3, width=2, font=(
+        row3e3_entry = Entry(frame3, textvariable=self.row3e3, width=2, font=(
             'Geogia 20'), bg='black', fg='white', justify='center')
         row3e3_entry.pack(side=LEFT, padx=5, pady=5)
-        row3e4_entry = Entry(frame3, textvariable=row3e4, width=2, font=(
+        row3e4_entry = Entry(frame3, textvariable=self.row3e4, width=2, font=(
             'Geogia 20'), bg='black', fg='white', justify='center')
         row3e4_entry.pack(side=LEFT, padx=5, pady=5)
-        row3e5_entry = Entry(frame3, textvariable=row3e5, width=2, font=(
+        row3e5_entry = Entry(frame3, textvariable=self.row3e5, width=2, font=(
             'Geogia 20'), bg='black', fg='white', justify='center')
         row3e5_entry.pack(side=LEFT)
 
-        # --- Starting Wordle Game UI for FORTH row. ---.
-        global row4e1
-        global row4e2
-        global row4e3
-        global row4e4
-        global row4e5
+        row3e1_entry.bind('<KeyRelease>', caps)
+        row3e2_entry.bind('<KeyRelease>', caps)
+        row3e3_entry.bind('<KeyRelease>', caps)
+        row3e4_entry.bind('<KeyRelease>', caps)
+        row3e5_entry.bind('<KeyRelease>', caps)
 
+        # --- Starting Wordle Game UI for FORTH row. ---.
         global row4e1_entry
         global row4e2_entry
         global row4e3_entry
         global row4e4_entry
         global row4e5_entry
 
-        row4e1 = StringVar()
-        row4e2 = StringVar()
-        row4e3 = StringVar()
-        row4e4 = StringVar()
-        row4e5 = StringVar()
+        self.row4e1 = StringVar()
+        self.row4e2 = StringVar()
+        self.row4e3 = StringVar()
+        self.row4e4 = StringVar()
+        self.row4e5 = StringVar()
 
-        row4e1_entry = Entry(frame4, textvariable=row4e1, width=2, font=(
+        row4e1_entry = Entry(frame4, textvariable=self.row4e1, width=2, font=(
             'Geogia 20'), bg='black', fg='white', justify='center')
         row4e1_entry.pack(side=LEFT, padx=5, pady=5)
-        row4e2_entry = Entry(frame4, textvariable=row4e2, width=2, font=(
+        row4e2_entry = Entry(frame4, textvariable=self.row4e2, width=2, font=(
             'Geogia 20'), bg='black', fg='white', justify='center')
         row4e2_entry.pack(side=LEFT, padx=5, pady=5)
-        row4e3_entry = Entry(frame4, textvariable=row4e3, width=2, font=(
+        row4e3_entry = Entry(frame4, textvariable=self.row4e3, width=2, font=(
             'Geogia 20'), bg='black', fg='white', justify='center')
         row4e3_entry.pack(side=LEFT, padx=5, pady=5)
-        row4e4_entry = Entry(frame4, textvariable=row4e4, width=2, font=(
+        row4e4_entry = Entry(frame4, textvariable=self.row4e4, width=2, font=(
             'Geogia 20'), bg='black', fg='white', justify='center')
         row4e4_entry.pack(side=LEFT, padx=5, pady=5)
-        row4e5_entry = Entry(frame4, textvariable=row4e5, width=2, font=(
+        row4e5_entry = Entry(frame4, textvariable=self.row4e5, width=2, font=(
             'Geogia 20'), bg='black', fg='white', justify='center')
         row4e5_entry.pack(side=LEFT)
 
-        # --- Starting Wordle Game UI for FIFTH row. ---.
-        global row5e1
-        global row5e2
-        global row5e3
-        global row5e4
-        global row5e5
+        row4e1_entry.bind('<KeyRelease>', caps)
+        row4e2_entry.bind('<KeyRelease>', caps)
+        row4e3_entry.bind('<KeyRelease>', caps)
+        row4e4_entry.bind('<KeyRelease>', caps)
+        row4e5_entry.bind('<KeyRelease>', caps)
 
+        # --- Starting Wordle Game UI for FIFTH row. ---.
         global row5e1_entry
         global row5e2_entry
         global row5e3_entry
         global row5e4_entry
         global row5e5_entry
 
-        row5e1 = StringVar()
-        row5e2 = StringVar()
-        row5e3 = StringVar()
-        row5e4 = StringVar()
-        row5e5 = StringVar()
+        self.row5e1 = StringVar()
+        self.row5e2 = StringVar()
+        self.row5e3 = StringVar()
+        self.row5e4 = StringVar()
+        self.row5e5 = StringVar()
 
-        row5e1_entry = Entry(frame5, textvariable=row5e1, width=2, font=(
+        row5e1_entry = Entry(frame5, textvariable=self.row5e1, width=2, font=(
             'Geogia 20'), bg='black', fg='white', justify='center')
         row5e1_entry.pack(side=LEFT, padx=5, pady=5)
-        row5e2_entry = Entry(frame5, textvariable=row5e2, width=2, font=(
+        row5e2_entry = Entry(frame5, textvariable=self.row5e2, width=2, font=(
             'Geogia 20'), bg='black', fg='white', justify='center')
         row5e2_entry.pack(side=LEFT, padx=5, pady=5)
-        row5e3_entry = Entry(frame5, textvariable=row5e3, width=2, font=(
+        row5e3_entry = Entry(frame5, textvariable=self.row5e3, width=2, font=(
             'Geogia 20'), bg='black', fg='white', justify='center')
         row5e3_entry.pack(side=LEFT, padx=5, pady=5)
-        row5e4_entry = Entry(frame5, textvariable=row5e4, width=2, font=(
+        row5e4_entry = Entry(frame5, textvariable=self.row5e4, width=2, font=(
             'Geogia 20'), bg='black', fg='white', justify='center')
         row5e4_entry.pack(side=LEFT, padx=5, pady=5)
-        row5e5_entry = Entry(frame5, textvariable=row5e5, width=2, font=(
+        row5e5_entry = Entry(frame5, textvariable=self.row5e5, width=2, font=(
             'Geogia 20'), bg='black', fg='white', justify='center')
         row5e5_entry.pack(side=LEFT)
 
-        # --- Starting Wordle Game UI for SIXTH row. ---.
-        global row6e1
-        global row6e2
-        global row6e3
-        global row6e4
-        global row6e5
+        row5e1_entry.bind('<KeyRelease>', caps)
+        row5e2_entry.bind('<KeyRelease>', caps)
+        row5e3_entry.bind('<KeyRelease>', caps)
+        row5e4_entry.bind('<KeyRelease>', caps)
+        row5e5_entry.bind('<KeyRelease>', caps)
 
+        # --- Starting Wordle Game UI for SIXTH row. ---.
         global row6e1_entry
         global row6e2_entry
         global row6e3_entry
         global row6e4_entry
         global row6e5_entry
 
-        row6e1 = StringVar()
-        row6e2 = StringVar()
-        row6e3 = StringVar()
-        row6e4 = StringVar()
-        row6e5 = StringVar()
+        self.row6e1 = StringVar()
+        self.row6e2 = StringVar()
+        self.row6e3 = StringVar()
+        self.row6e4 = StringVar()
+        self.row6e5 = StringVar()
 
-        row6e1_entry = Entry(frame6, textvariable=row6e1, width=2, font=(
+        row6e1_entry = Entry(frame6, textvariable=self.row6e1, width=2, font=(
             'Geogia 20'), bg='black', fg='white', justify='center')
         row6e1_entry.pack(side=LEFT, padx=5, pady=5)
-        row6e2_entry = Entry(frame6, textvariable=row6e2, width=2, font=(
+        row6e2_entry = Entry(frame6, textvariable=self.row6e2, width=2, font=(
             'Geogia 20'), bg='black', fg='white', justify='center')
         row6e2_entry.pack(side=LEFT, padx=5, pady=5)
-        row6e3_entry = Entry(frame6, textvariable=row6e3, width=2, font=(
+        row6e3_entry = Entry(frame6, textvariable=self.row6e3, width=2, font=(
             'Geogia 20'), bg='black', fg='white', justify='center')
         row6e3_entry.pack(side=LEFT, padx=5, pady=5)
-        row6e4_entry = Entry(frame6, textvariable=row6e4, width=2, font=(
+        row6e4_entry = Entry(frame6, textvariable=self.row6e4, width=2, font=(
             'Geogia 20'), bg='black', fg='white', justify='center')
         row6e4_entry.pack(side=LEFT, padx=5, pady=5)
-        row6e5_entry = Entry(frame6, textvariable=row6e5, width=2, font=(
+        row6e5_entry = Entry(frame6, textvariable=self.row6e5, width=2, font=(
             'Geogia 20'), bg='black', fg='white', justify='center')
         row6e5_entry.pack(side=LEFT)
+
+        row6e1_entry.bind('<KeyRelease>', caps)
+        row6e2_entry.bind('<KeyRelease>', caps)
+        row6e3_entry.bind('<KeyRelease>', caps)
+        row6e4_entry.bind('<KeyRelease>', caps)
+        row6e5_entry.bind('<KeyRelease>', caps)
 
         # Answer submission button...
         # This line is to add style to button texts.
