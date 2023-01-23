@@ -1,94 +1,68 @@
 #import modules
-
+from math import radians
 from tkinter_dbconnection_file import mysqlCon
 from cgitb import text
-from ctypes.wintypes import SIZE
 from tkinter import *
+from tkinter import font
+from tkinter import END, Label, messagebox
+
 # This module provides a portable way of using operating system dependent functionality.
 import os
 from tkinter import messagebox
-from tkinter import font
-from itertools import count
-from tkinter import END, Label, messagebox
-from argparse import _CountAction
 from operator import length_hint
 import random
 
 #Global Variable Declaration.
 global tmpAnswer
 global tmpRandomChoice
-global listAns
-global countC
-global countI
-global listUserAns
-global finalWord
-chanceCount = 1
 
 global tempCount  # This variable to call word to check as per the attempts.
 tempCount = 1
-global username1
 global nextlevelframe
-global hintLabel
-global hintDisplayLabel
 
 # importing database class from file name called "tkinter_dbconeection_file.py"
-mysqlCon.fndbconn()
-
-class WordleClass:
+class WordleClass(mysqlCon):
     def __init__(self):
         print("Hello this is wordleclass...")
+        self.fndbconn()
 
-    def getNewFinalWord():
-        global listAns
+    def getNewFinalWord(self):
         global tmpRandomChoice
-        global listFinal
         # This code is to get final word list from file.
-        listAns = []
-        file = open("C:\\Users\ma29h\Desktop\Sagar Study\OOPJ and Python\Final Version\wordle.txt","r")
-        str = file.read().split('\n')
-
-        listAns = str
+        self.listAns = []
+        file = open("/Users/sagartandel/Documents/Sagar Study/OOPJ and Python/Final Version/wordle.txt","r")
+        self.listAns = file.read().split('\n')
         file.close()
-        # print(listAns)
-
-        # End of the code.
-
+        
         # Generating random number's word for today's game.
         tmpRandomChoice = random.randrange(0, 25)
 
         # This to store random generated word for Game.
         i = 1
-        global finalWord
-        finalWord = listAns[tmpRandomChoice]
-        global listFinal
-        print(finalWord)
-        listFinal = []
-        listFinal.clear()
+        self.finalWord = self.listAns[tmpRandomChoice]
+        print(self.finalWord)
+
+        self.listFinal = []
+        self.listFinal.clear()
         for i in range(5):
-            listFinal.append(finalWord[i])
-            print(listFinal)
-        return finalWord
+            self.listFinal.append(self.finalWord[i])
+        print(self.listFinal)
+        return self.finalWord
 
-    def getCorrectAnswer():
-        global finalWord
-        print(f"Correct Answer = {finalWord}")
-        return finalWord
+    def getCorrectAnswer(self):
+        print(f"Correct Answer = {self.finalWord}")
+        return self.finalWord
 
-    def fnStoreUserInputList(tmpAnswer):
+    def fnStoreUserInputList(self, tmpAnswer):
         # Here, starting the storing user input in list from here.
-        global listFinal
-        global listUserAns
-        listUserAns = []
-        listUserAns.clear()
+        self.listUserAns = []
+        self.listUserAns.clear()
         j = 1
         for j in range(5):
-            listUserAns.append(tmpAnswer[j])
-            print(listUserAns)
+            self.listUserAns.append(tmpAnswer[j])
+        print(self.listUserAns)
 
         # Matching User and Final Answer.
-        global countC
-        global countI
-
         # This list to be used to make TKINTER UI , green-yellow-grey as per the answer.
         global greenList
         global yellowList
@@ -99,8 +73,8 @@ class WordleClass:
         greyList = []
         # -------------End ------------.
 
-        countC = 0
-        countI = 0
+        self.countC = 0
+        self.countI = 0
         k = 0
         l = 0
 
@@ -111,8 +85,8 @@ class WordleClass:
             flag2 = 0
             flag3 = 0
             for l in range(5):
-                user = listUserAns[k]
-                computer = listFinal[l]
+                user = self.listUserAns[k]
+                computer = self.listFinal[l]
 
                 # user==compter is used for letter matching, k==l is used for position matching.
                 if user == computer and k == l:
@@ -122,36 +96,50 @@ class WordleClass:
                 elif user != computer:
                     flag3 = 3
                 else:
-                    print("")
-
+                    pass
+            
+            #Check and add answer in respective lists.
             if flag1 == 1:
                 # print(f"Position of letter #{user} is correct.")
                 print(f"\033[1;32;40m {user}  \n")
-                countC += 1
+                self.countC += 1
                 greenList.append(k+1)
             elif flag2 == 2 and flag3 == 3:
                 # print(f"This #{user} letter is exist but position is not correct.")
                 print(f"\033[1;33;40m {user}  \n")
-                countI += 1
+                self.countI += 1
                 yellowList.append(k+1)
             elif flag3 == 3:
                 # print(f"This #{user} letter is not exist.")
                 print(f"\033[1;37;40m {user}  \n")
-                countI += 1
+                self.countI += 1
                 greyList.append(k+1)
             else:
-                print("")
+                pass
 
         # Calling function to check final answer and user limits.
         return greenList, yellowList, greyList
 
-        # Function to check maximum limit to get answer from user if user is wrong.
-        # Function calling for user input and it's length validation.
-
 #This class is for Registration page.
-class RegisterClass:
+class RegisterClass(mysqlCon):
+    def register_user(self):        #Implementing event on register button.
+        self.fndbconn()     #Calling fndbConn() from mysqlConn class using Inheritance.
+
+        self.username_info = self.username.get()
+        self.password_info = self.password.get()
+        self.email_info = self.tmpemail.get()
+
+        self.username_entry.delete(0, END)
+        self.password_entry.delete(0, END)
+        self.email_entry.delete(0, END)
+
+        checkUser = mysqlCon.fnRegister(self.username_info, self.password_info, self.email_info)
+        messagebox.showinfo(
+            "Success!", "Welcome! Registration Done Suceessfully..")
+        register_screen.destroy()
+
     # Designing window for registration
-    def register():
+    def register(self):
         global register_screen
         register_screen = Toplevel(main_screen)
         register_screen.title("Register")
@@ -187,60 +175,42 @@ class RegisterClass:
         L1.pack()
         # End of wrodle UI....
 
-        global username
-        global password
-        global tmpemail
-        global username_entry
-        global password_entry
-        global email_entry
-        username = StringVar()
-        password = StringVar()
-        tmpemail = StringVar()
+        self.username = StringVar()
+        self.password = StringVar()
+        self.tmpemail = StringVar()
 
         Label(register_screen, text="Please enter details below", bg="blue",
               fg="white", width="300", height="2", font=("Calibri", 13)).pack()
         Label(register_screen, text="").pack()
         username_lable = Label(register_screen, text="Username * ")
         username_lable.pack()
-        username_entry = Entry(register_screen, textvariable=username)
-        username_entry.pack()
+
+        self.username_entry = Entry(register_screen, textvariable=self.username)
+        self.username_entry.pack()
+        
         password_lable = Label(register_screen, text="Password * ")
         password_lable.pack()
-        password_entry = Entry(register_screen, textvariable=password, show='*')
-        password_entry.pack()
+        
+        self.password_entry = Entry(register_screen, textvariable=self.password, show='*')
+        self.password_entry.pack()
+        
         email_lable = Label(register_screen, text="Email * ")
         email_lable.pack()
-        email_entry = Entry(register_screen, textvariable=tmpemail)
-        email_entry.pack()
+        
+        self.email_entry = Entry(register_screen, textvariable=self.tmpemail)
+        self.email_entry.pack()
         Label(register_screen, text="").pack()
 
         # This line is to add style to button texts.
         buttonFont = font.Font(size=12, weight='bold')
         Button(register_screen, text="Register", font="buttonFont", width=10,
-               height=1, bg="blue", fg="magenta", command=RegisterClass.register_user).pack()
-
-
-    # Implementing event on register button
-    def register_user():
-        username_info = username.get()
-        password_info = password.get()
-        email_info = tmpemail.get()
-
-        username_entry.delete(0, END)
-        password_entry.delete(0, END)
-        email_entry.delete(0, END)
-
-        mysqlCon.fndbconn()
-        checkUser = mysqlCon.fnRegister(username_info, password_info, email_info)
-        messagebox.showinfo(
-            "Success!", "Welcome! Registration Done Suceessfully..")
-        register_screen.destroy()
+               height=1, bg="blue", fg="magenta", command=lambda: self.register_user()).pack()
 
 
 #This class is for the Login Page.
-class LoginClass:
+class LoginClass(mysqlCon):
     # Designing window for login.
-    def login():
+    def login(self):
         global login_screen
         login_screen = Toplevel(main_screen)
         login_screen.title("Login")
@@ -280,94 +250,652 @@ class LoginClass:
               fg="white", width="300", height="2", font=("Calibri", 13)).pack()
         Label(login_screen, text="").pack()
 
-        global username_verify
-        global password_verify
-
-        username_verify = StringVar()
-        password_verify = StringVar()
-
-        global username_login_entry
-        global password_login_entry
+        self.username_verify = StringVar()
+        self.password_verify = StringVar()
 
         Label(login_screen, text="Username * ").pack()
-        username_login_entry = Entry(login_screen, textvariable=username_verify)
-        username_login_entry.pack()
+        self.username_login_entry = Entry(login_screen, textvariable=self.username_verify)
+        self.username_login_entry.pack()
+
         Label(login_screen, text="").pack()
         Label(login_screen, text="Password * ").pack()
-        password_login_entry = Entry(
-            login_screen, textvariable=password_verify, show='*')
-        password_login_entry.pack()
+        self.password_login_entry = Entry(
+            login_screen, textvariable=self.password_verify, show='*')
+        self.password_login_entry.pack()
         Label(login_screen, text="").pack()
 
         # This line is to add style to button texts.
         buttonFont = font.Font(size=12, weight='bold')
         Button(login_screen, font="buttonFont", text="Login", bg="blue",
-               fg="magenta", width=10, height=1, command=LoginClass.login_verify).pack()
+               fg="magenta", width=10, height=1, command=lambda: self.login_verify()).pack()
 
 
     # Implementing event on login button
-    def login_verify():
-        global username1
-        username1 = username_verify.get()
-        password1 = password_verify.get()
-        username_login_entry.delete(0, END)
-        password_login_entry.delete(0, END)
+    def login_verify(self):
+        self.username = self.username_verify.get()
+        self.password = self.password_verify.get()
+        
+        self.username_login_entry.delete(0, END)
+        self.password_login_entry.delete(0, END)
 
-        mysqlCon.fndbconn()
+        self.fndbconn()
         # checking here if the details are matching with mysqlconntable
-        checkUser = mysqlCon.fnLogin(username1, password1)
-        if len(checkUser) > 0:
+        self.checkUser = self.fnLogin(self.username, self.password)
+        
+        print(self.checkUser)
+        if (len(self.checkUser) > 0):
             Label(login_screen, text="Login Success",
                   fg="green", font=("calibri", 11)).pack()
             login_screen.destroy()
             # Calling Wordle Game Main UI.
-            LoginClass.login_sucess()
+            self.login_sucess()
         else:
-            LoginClass.password_not_recognised()
+            self.password_not_recognised()
 
     # Designing popup for login success
-    def login_sucess():
-        #global Toplevel
-        #global login_success_screen
-        #login_success_screen = Toplevel(login_screen)
-        # login_success_screen.title("Success")
-        # login_success_screen.geometry("150x100")
-        messagebox.showinfo("Suceess", "Welcome to game!")
+    def login_sucess(self):
+        tmp = "Login Successfully!\nWelcome '" + self.username + "'!"
+        messagebox.showinfo("Success!", tmp)
         main_screen.destroy()
-        GameMainClass.wordle_test()
+        GameMainClass.wordle_test(self)
 
     # Designing popup for login invalid password
-    def password_not_recognised():
-        global password_not_recog_screen
-        password_not_recog_screen = Toplevel(login_screen)
-        password_not_recog_screen.title("PASSWORDFAIL")
-        password_not_recog_screen.geometry("250x200")
-        Label(password_not_recog_screen, text="Invalid Password ").pack()
-        Button(password_not_recog_screen, text="OK",
-               command=LoginClass.delete_password_not_recognised).pack()
-
-    # Designing popup for user not found
-    def user_not_found():
-        global user_not_found_screen
-        user_not_found_screen = Toplevel(login_screen)
-        user_not_found_screen.title("USERFAIL")
-        user_not_found_screen.geometry("150x100")
-        Label(user_not_found_screen, text="User Not Found").pack()
-        Button(user_not_found_screen, text="OK",
-               command=LoginClass.delete_user_not_found_screen).pack()
-
-    # Deleting popups
-    def delete_password_not_recognised():
-        password_not_recog_screen.destroy()
+    def login_fail(self):
+        messagebox.showinfo("Fail!", "Unauthorizes Access. Try Again!")
 
 
-    def delete_user_not_found_screen():
-        user_not_found_screen.destroy()
+class UserAttemptClass(WordleClass):
+    def fnCheckAttemptNo(self):
+        # Using global variables to access in this function.
+        global tmpLabel
+        global tempCount
+        global wordle_screen
+        global nextlevelframe
+        global tmpLabel
+        # End
+
+        # Checking attempt and then to check the user answer with final answer.
+        print(f"Attempt# = {tempCount}")
+        # --- For First attempt ----
+        if tempCount == 1:
+            row1e1_info = row1e1_entry.get()
+            row1e2_info = row1e2_entry.get()
+            row1e3_info = row1e3_entry.get()
+            row1e4_info = row1e4_entry.get()
+            row1e5_info = row1e5_entry.get()
+
+            row1e1_entry.config(state="disabled")
+            row1e2_entry.config(state="disabled")
+            row1e3_entry.config(state="disabled")
+            row1e4_entry.config(state="disabled")
+            row1e5_entry.config(state="disabled")
+
+            tmpAnswer = row1e1_info + row1e2_info + row1e3_info + row1e4_info + row1e5_info
+            print(f"User's answer = {tmpAnswer}")
+            greenList, yellowList, greyList = self.fnStoreUserInputList(
+                tmpAnswer)
+            print(greenList)
+            print(yellowList)
+            print(greyList)
+            # If we write loop like this, i becomes value rather than position.
+            for i in greenList:
+                if i == 1:
+                    row1e1_entry.configure(
+                        disabledbackground="green", state="disabled", disabledforeground="black")
+                if i == 2:
+                    row1e2_entry.configure(
+                        disabledbackground="green", state="disabled", disabledforeground="black")
+                if i == 3:
+                    row1e3_entry.configure(
+                        disabledbackground="green", state="disabled", disabledforeground="black")
+                if i == 4:
+                    row1e4_entry.configure(
+                        disabledbackground="green", state="disabled", disabledforeground="black")
+                if i == 5:
+                    row1e5_entry.configure(
+                        disabledbackground="green", state="disabled", disabledforeground="black")
+            for i in yellowList:
+                if i == 1:
+                    row1e1_entry.configure(
+                        disabledbackground="yellow", state="disabled", disabledforeground="black")
+                if i == 2:
+                    row1e2_entry.configure(
+                        disabledbackground="yellow", state="disabled", disabledforeground="black")
+                if i == 3:
+                    row1e3_entry.configure(
+                        disabledbackground="yellow", state="disabled", disabledforeground="black")
+                if i == 4:
+                    row1e4_entry.configure(
+                        disabledbackground="yellow", state="disabled", disabledforeground="black")
+                if i == 5:
+                    row1e5_entry.configure(
+                        disabledbackground="yellow", state="disabled", disabledforeground="black")
+            for i in greyList:
+                if i == 1:
+                    row1e1_entry.configure(
+                        disabledbackground="grey", state="disabled", disabledforeground="black")
+                if i == 2:
+                    row1e2_entry.configure(
+                        disabledbackground="grey", state="disabled", disabledforeground="black")
+                if i == 3:
+                    row1e3_entry.configure(
+                        disabledbackground="grey", state="disabled", disabledforeground="black")
+                if i == 4:
+                    row1e4_entry.configure(
+                        disabledbackground="grey", state="disabled", disabledforeground="black")
+                if i == 5:
+                    row1e5_entry.configure(
+                        disabledbackground="grey", state="disabled", disabledforeground="black")
+            # Checking if answer is correct or not.
+            if len(greenList) == 5:
+                submitButton.destroy()
+                tmpLabelcorrect = Label(
+                    wordle_screen, text="Congratulations! Your Answer is CORRECT.", fg="green", font=("calibri", 11))
+                tmpLabelcorrect.pack()
+
+                # Answer submission button...
+                # This line is to add style to button texts.
+                buttonFont = font.Font(size=12, weight='bold')
+                btnNextLevel = Button(wordle_screen, text="Next Level", font="buttonFont",
+                                      width=10, height=1, bg="dark green", fg="magenta")
+                btnNextLevel.place(relx=0.0, rely=1.0, anchor='sw')
+                btnNextLevel.pack()
+                btnNextLevel.config(command=self.fnNextLevel)
+            else:
+                tmpLabel = Label(
+                    wordle_screen, text="Incorrect Answer. Try Again.", fg="green", font=("calibri", 11))
+                tmpLabel.pack()
+                tempCount += 1
+
+        # --- For second attempt ----
+        elif tempCount == 2:
+            row2e1_info = row2e1_entry.get()
+            row2e2_info = row2e2_entry.get()
+            row2e3_info = row2e3_entry.get()
+            row2e4_info = row2e4_entry.get()
+            row2e5_info = row2e5_entry.get()
+
+            row2e1_entry.config(state="disabled")
+            row2e2_entry.config(state="disabled")
+            row2e3_entry.config(state="disabled")
+            row2e4_entry.config(state="disabled")
+            row2e5_entry.config(state="disabled")
+
+            tmpAnswer = row2e1_info + row2e2_info + row2e3_info + row2e4_info + row2e5_info
+            print(f"User's answer = {tmpAnswer}")
+            greenList, yellowList, greyList = self.fnStoreUserInputList(
+                tmpAnswer)
+            print(greenList)
+            print(yellowList)
+            print(greyList)
+            for i in greenList:
+                if i == 1:
+                    row2e1_entry.configure(
+                        disabledbackground="green", state="disabled", disabledforeground="black")
+                if i == 2:
+                    row2e2_entry.configure(
+                        disabledbackground="green", state="disabled", disabledforeground="black")
+                if i == 3:
+                    row2e3_entry.configure(
+                        disabledbackground="green", state="disabled", disabledforeground="black")
+                if i == 4:
+                    row2e4_entry.configure(
+                        disabledbackground="green", state="disabled", disabledforeground="black")
+                if i == 5:
+                    row2e5_entry.configure(
+                        disabledbackground="green", state="disabled", disabledforeground="black")
+            for i in yellowList:
+                if i == 1:
+                    row2e1_entry.configure(
+                        disabledbackground="yellow", state="disabled", disabledforeground="black")
+                if i == 2:
+                    row2e2_entry.configure(
+                        disabledbackground="yellow", state="disabled", disabledforeground="black")
+                if i == 3:
+                    row2e3_entry.configure(
+                        disabledbackground="yellow", state="disabled", disabledforeground="black")
+                if i == 4:
+                    row2e4_entry.configure(
+                        disabledbackground="yellow", state="disabled", disabledforeground="black")
+                if i == 5:
+                    row2e5_entry.configure(
+                        disabledbackground="yellow", state="disabled", disabledforeground="black")
+            for i in greyList:
+                if i == 1:
+                    row2e1_entry.configure(
+                        disabledbackground="grey", state="disabled", disabledforeground="black")
+                if i == 2:
+                    row2e2_entry.configure(
+                        disabledbackground="grey", state="disabled", disabledforeground="black")
+                if i == 3:
+                    row2e3_entry.configure(
+                        disabledbackground="grey", state="disabled", disabledforeground="black")
+                if i == 4:
+                    row2e4_entry.configure(
+                        disabledbackground="grey", state="disabled", disabledforeground="black")
+                if i == 5:
+                    row2e5_entry.configure(
+                        disabledbackground="grey", state="disabled", disabledforeground="black")
+            # Checking if answer is correct or not.
+            tmpLabel.destroy()
+            if len(greenList) == 5:
+                submitButton.destroy()
+                tmpLabelcorrect = Label(
+                    wordle_screen, text="Congratulations! Your Answer is CORRECT.", fg="green", font=("calibri", 11))
+                tmpLabelcorrect.pack()
+
+                # Answer submission button...
+                # This line is to add style to button texts.
+                buttonFont = font.Font(size=12, weight='bold')
+                btnNextLevel = Button(wordle_screen, text="Next Level", font="buttonFont",
+                                      width=10, height=1, bg="dark green", fg="magenta")
+                btnNextLevel.place(relx=0.0, rely=1.0, anchor='sw')
+                btnNextLevel.pack()
+                btnNextLevel.config(command=self.fnNextLevel)
+            else:
+                tmpLabel.destroy()
+                tmpLabel = Label(
+                    wordle_screen, text="Incorrect Answer. Try Again.", fg="green", font=("calibri", 11))
+                tmpLabel.pack()
+                tempCount += 1
+
+        # ----- For third attempt ------
+        elif tempCount == 3:
+            row3e1_info = row3e1_entry.get()
+            row3e2_info = row3e2_entry.get()
+            row3e3_info = row3e3_entry.get()
+            row3e4_info = row3e4_entry.get()
+            row3e5_info = row3e5_entry.get()
+
+            row3e1_entry.config(state="disabled")
+            row3e2_entry.config(state="disabled")
+            row3e3_entry.config(state="disabled")
+            row3e4_entry.config(state="disabled")
+            row3e5_entry.config(state="disabled")
+
+            tmpAnswer = row3e1_info + row3e2_info + row3e3_info + row3e4_info + row3e5_info
+            print(f"User's answer = {tmpAnswer}")
+            greenList, yellowList, greyList = self.fnStoreUserInputList(
+                tmpAnswer)
+            print(greenList)
+            print(yellowList)
+            print(greyList)
+            for i in greenList:
+                if i == 1:
+                    row3e1_entry.configure(
+                        disabledbackground="green", state="disabled", disabledforeground="black")
+                if i == 2:
+                    row3e2_entry.configure(
+                        disabledbackground="green", state="disabled", disabledforeground="black")
+                if i == 3:
+                    row3e3_entry.configure(
+                        disabledbackground="green", state="disabled", disabledforeground="black")
+                if i == 4:
+                    row3e4_entry.configure(
+                        disabledbackground="green", state="disabled", disabledforeground="black")
+                if i == 5:
+                    row3e5_entry.configure(
+                        disabledbackground="green", state="disabled", disabledforeground="black")
+            for i in yellowList:
+                if i == 1:
+                    row3e1_entry.configure(
+                        disabledbackground="yellow", state="disabled", disabledforeground="black")
+                if i == 2:
+                    row3e2_entry.configure(
+                        disabledbackground="yellow", state="disabled", disabledforeground="black")
+                if i == 3:
+                    row3e3_entry.configure(
+                        disabledbackground="yellow", state="disabled", disabledforeground="black")
+                if i == 4:
+                    row3e4_entry.configure(
+                        disabledbackground="yellow", state="disabled", disabledforeground="black")
+                if i == 5:
+                    row3e5_entry.configure(
+                        disabledbackground="yellow", state="disabled", disabledforeground="black")
+            for i in greyList:
+                if i == 1:
+                    row3e1_entry.configure(
+                        disabledbackground="grey", state="disabled", disabledforeground="black")
+                if i == 2:
+                    row3e2_entry.configure(
+                        disabledbackground="grey", state="disabled", disabledforeground="black")
+                if i == 3:
+                    row3e3_entry.configure(
+                        disabledbackground="grey", state="disabled", disabledforeground="black")
+                if i == 4:
+                    row3e4_entry.configure(
+                        disabledbackground="grey", state="disabled", disabledforeground="black")
+                if i == 5:
+                    row3e5_entry.configure(
+                        disabledbackground="grey", state="disabled", disabledforeground="black")
+            # Checking if answer is correct or not.
+            tmpLabel.destroy()
+            if len(greenList) == 5:
+                submitButton.destroy()
+                tmpLabelcorrect = Label(
+                    wordle_screen, text="Congratulations! Your Answer is CORRECT.", fg="green", font=("calibri", 11))
+                tmpLabelcorrect.pack()
+
+                # Answer submission button...
+                # This line is to add style to button texts.
+                buttonFont = font.Font(size=12, weight='bold')
+                btnNextLevel = Button(wordle_screen, text="Next Level", font="buttonFont",
+                                      width=10, height=1, bg="dark green", fg="magenta")
+                btnNextLevel.place(relx=0.0, rely=1.0, anchor='sw')
+                btnNextLevel.pack()
+                btnNextLevel.config(command=self.fnNextLevel)
+            else:
+                tmpLabel.destroy()
+                tmpLabel = Label(
+                    wordle_screen, text="Incorrect Answer. Try Again.", fg="green", font=("calibri", 11))
+                tmpLabel.pack()
+                tempCount += 1
+
+        # Checking for FORTH attempt ----.
+        elif tempCount == 4:
+            row4e1_info = row4e1_entry.get()
+            row4e2_info = row4e2_entry.get()
+            row4e3_info = row4e3_entry.get()
+            row4e4_info = row4e4_entry.get()
+            row4e5_info = row4e5_entry.get()
+
+            row4e1_entry.config(state="disabled")
+            row4e2_entry.config(state="disabled")
+            row4e3_entry.config(state="disabled")
+            row4e4_entry.config(state="disabled")
+            row4e5_entry.config(state="disabled")
+
+            tmpAnswer = row4e1_info + row4e2_info + row4e3_info + row4e4_info + row4e5_info
+            print(f"User's answer = {tmpAnswer}")
+            greenList, yellowList, greyList = self.fnStoreUserInputList(
+                tmpAnswer)
+            print(greenList)
+            print(yellowList)
+            print(greyList)
+            for i in greenList:
+                if i == 1:
+                    row4e1_entry.configure(
+                        disabledbackground="green", state="disabled", disabledforeground="black")
+                if i == 2:
+                    row4e2_entry.configure(
+                        disabledbackground="green", state="disabled", disabledforeground="black")
+                if i == 3:
+                    row4e3_entry.configure(
+                        disabledbackground="green", state="disabled", disabledforeground="black")
+                if i == 4:
+                    row4e4_entry.configure(
+                        disabledbackground="green", state="disabled", disabledforeground="black")
+                if i == 5:
+                    row4e5_entry.configure(
+                        disabledbackground="green", state="disabled", disabledforeground="black")
+            for i in yellowList:
+                if i == 1:
+                    row4e1_entry.configure(
+                        disabledbackground="yellow", state="disabled", disabledforeground="black")
+                if i == 2:
+                    row4e2_entry.configure(
+                        disabledbackground="yellow", state="disabled", disabledforeground="black")
+                if i == 3:
+                    row4e3_entry.configure(
+                        disabledbackground="yellow", state="disabled", disabledforeground="black")
+                if i == 4:
+                    row4e4_entry.configure(
+                        disabledbackground="yellow", state="disabled", disabledforeground="black")
+                if i == 5:
+                    row4e5_entry.configure(
+                        disabledbackground="yellow", state="disabled", disabledforeground="black")
+            for i in greyList:
+                if i == 1:
+                    row4e1_entry.configure(
+                        disabledbackground="grey", state="disabled", disabledforeground="black")
+                if i == 2:
+                    row4e2_entry.configure(
+                        disabledbackground="grey", state="disabled", disabledforeground="black")
+                if i == 3:
+                    row4e3_entry.configure(
+                        disabledbackground="grey", state="disabled", disabledforeground="black")
+                if i == 4:
+                    row4e4_entry.configure(
+                        disabledbackground="grey", state="disabled", disabledforeground="black")
+                if i == 5:
+                    row4e5_entry.configure(
+                        disabledbackground="grey", state="disabled", disabledforeground="black")
+            # Checking if answer is correct or not.
+            tmpLabel.destroy()
+            if len(greenList) == 5:
+                submitButton.destroy()
+                tmpLabelcorrect = Label(
+                    wordle_screen, text="Congratulations! Your Answer is CORRECT.", fg="green", font=("calibri", 11))
+                tmpLabelcorrect.pack()
+
+                # Answer submission button...
+                # This line is to add style to button texts.
+                buttonFont = font.Font(size=12, weight='bold')
+                btnNextLevel = Button(wordle_screen, text="Next Level", font="buttonFont",
+                                      width=10, height=1, bg="dark green", fg="magenta")
+                btnNextLevel.place(relx=0.0, rely=1.0, anchor='sw')
+                btnNextLevel.pack()
+                btnNextLevel.config(command=self.fnNextLevel)
+            else:
+                tmpLabel.destroy()
+                tmpLabel = Label(
+                    wordle_screen, text="Incorrect Answer. Try Again.", fg="green", font=("calibri", 11))
+                tmpLabel.pack()
+                tempCount += 1
+
+        # Checking for FIFTH attempt ----.
+        elif tempCount == 5:
+            row5e1_info = row5e1_entry.get()
+            row5e2_info = row5e2_entry.get()
+            row5e3_info = row5e3_entry.get()
+            row5e4_info = row5e4_entry.get()
+            row5e5_info = row5e5_entry.get()
+
+            row5e1_entry.config(state="disabled")
+            row5e2_entry.config(state="disabled")
+            row5e3_entry.config(state="disabled")
+            row5e4_entry.config(state="disabled")
+            row5e5_entry.config(state="disabled")
+
+            tmpAnswer = row5e1_info + row5e2_info + row5e3_info + row5e4_info + row5e5_info
+            print(f"User's answer = {tmpAnswer}")
+            greenList, yellowList, greyList = self.fnStoreUserInputList(
+                tmpAnswer)
+            print(greenList)
+            print(yellowList)
+            print(greyList)
+            for i in greenList:
+                if i == 1:
+                    row5e1_entry.configure(
+                        disabledbackground="green", state="disabled", disabledforeground="black")
+                if i == 2:
+                    row5e2_entry.configure(
+                        disabledbackground="green", state="disabled", disabledforeground="black")
+                if i == 3:
+                    row5e3_entry.configure(
+                        disabledbackground="green", state="disabled", disabledforeground="black")
+                if i == 4:
+                    row5e4_entry.configure(
+                        disabledbackground="green", state="disabled", disabledforeground="black")
+                if i == 5:
+                    row5e5_entry.configure(
+                        disabledbackground="green", state="disabled", disabledforeground="black")
+            for i in yellowList:
+                if i == 1:
+                    row5e1_entry.configure(
+                        disabledbackground="yellow", state="disabled", disabledforeground="black")
+                if i == 2:
+                    row5e2_entry.configure(
+                        disabledbackground="yellow", state="disabled", disabledforeground="black")
+                if i == 3:
+                    row5e3_entry.configure(
+                        disabledbackground="yellow", state="disabled", disabledforeground="black")
+                if i == 4:
+                    row5e4_entry.configure(
+                        disabledbackground="yellow", state="disabled", disabledforeground="black")
+                if i == 5:
+                    row5e5_entry.configure(
+                        disabledbackground="yellow", state="disabled", disabledforeground="black")
+            for i in greyList:
+                if i == 1:
+                    row5e1_entry.configure(
+                        disabledbackground="grey", state="disabled", disabledforeground="black")
+                if i == 2:
+                    row5e2_entry.configure(
+                        disabledbackground="grey", state="disabled", disabledforeground="black")
+                if i == 3:
+                    row5e3_entry.configure(
+                        disabledbackground="grey", state="disabled", disabledforeground="black")
+                if i == 4:
+                    row5e4_entry.configure(
+                        disabledbackground="grey", state="disabled", disabledforeground="black")
+                if i == 5:
+                    row5e5_entry.configure(
+                        disabledbackground="grey", state="disabled", disabledforeground="black")
+            # Checking if answer is correct or not.
+            tmpLabel.destroy()
+            if len(greenList) == 5:
+                submitButton.destroy()
+                tmpLabelcorrect = Label(
+                    wordle_screen, text="Congratulations! Your Answer is CORRECT.", fg="green", font=("calibri", 11))
+                tmpLabelcorrect.pack()
+
+                # Answer submission button...
+                # This line is to add style to button texts.
+                buttonFont = font.Font(size=12, weight='bold')
+                btnNextLevel = Button(wordle_screen, text="Next Level", font="buttonFont",
+                                      width=10, height=1, bg="dark green", fg="magenta")
+                btnNextLevel.place(relx=0.0, rely=1.0, anchor='sw')
+                btnNextLevel.pack()
+                btnNextLevel.config(command=self.fnNextLevel)
+            else:
+                tmpLabel.destroy()
+                tmpLabel = Label(
+                    wordle_screen, text="Incorrect Answer. Try Again.", fg="green", font=("calibri", 11))
+                tmpLabel.pack()
+                tempCount += 1
+
+        # Checking for SIXTH attempt ----.
+        elif tempCount == 6:
+            row6e1_info = row6e1_entry.get()
+            row6e2_info = row6e2_entry.get()
+            row6e3_info = row6e3_entry.get()
+            row6e4_info = row6e4_entry.get()
+            row6e5_info = row6e5_entry.get()
+
+            row6e1_entry.config(state="disabled")
+            row6e2_entry.config(state="disabled")
+            row6e3_entry.config(state="disabled")
+            row6e4_entry.config(state="disabled")
+            row6e5_entry.config(state="disabled")
+
+            tmpAnswer = row6e1_info + row6e2_info + row6e3_info + row6e4_info + row6e5_info
+            print(f"User's answer = {tmpAnswer}")
+            greenList, yellowList, greyList = self.fnStoreUserInputList(
+                tmpAnswer)
+            print(greenList)
+            print(yellowList)
+            print(greyList)
+            for i in greenList:
+                if i == 1:
+                    row6e1_entry.configure(
+                        disabledbackground="green", state="disabled", disabledforeground="black")
+                if i == 2:
+                    row6e2_entry.configure(
+                        disabledbackground="green", state="disabled", disabledforeground="black")
+                if i == 3:
+                    row6e3_entry.configure(
+                        disabledbackground="green", state="disabled", disabledforeground="black")
+                if i == 4:
+                    row6e4_entry.configure(
+                        disabledbackground="green", state="disabled", disabledforeground="black")
+                if i == 5:
+                    row6e5_entry.configure(
+                        disabledbackground="green", state="disabled", disabledforeground="black")
+            for i in yellowList:
+                if i == 1:
+                    row6e1_entry.configure(
+                        disabledbackground="yellow", state="disabled", disabledforeground="black")
+                if i == 2:
+                    row6e2_entry.configure(
+                        disabledbackground="yellow", state="disabled", disabledforeground="black")
+                if i == 3:
+                    row6e3_entry.configure(
+                        disabledbackground="yellow", state="disabled", disabledforeground="black")
+                if i == 4:
+                    row6e4_entry.configure(
+                        disabledbackground="yellow", state="disabled", disabledforeground="black")
+                if i == 5:
+                    row6e5_entry.configure(
+                        disabledbackground="yellow", state="disabled", disabledforeground="black")
+            for i in greyList:
+                if i == 1:
+                    row6e1_entry.configure(
+                        disabledbackground="grey", state="disabled", disabledforeground="black")
+                if i == 2:
+                    row6e2_entry.configure(
+                        disabledbackground="grey", state="disabled", disabledforeground="black")
+                if i == 3:
+                    row6e3_entry.configure(
+                        disabledbackground="grey", state="disabled", disabledforeground="black")
+                if i == 4:
+                    row6e4_entry.configure(
+                        disabledbackground="grey", state="disabled", disabledforeground="black")
+                if i == 5:
+                    row6e5_entry.configure(
+                        disabledbackground="grey", state="disabled", disabledforeground="black")
+            # Checking if answer is correct or not.
+            tmpLabel.destroy()
+            if len(greenList) == 5:
+                submitButton.destroy()
+                tmpLabelcorrect = Label(
+                    wordle_screen, text="Congratulations! Your Answer is CORRECT.", fg="green", font=("calibri", 11))
+                tmpLabelcorrect.pack()
+
+                # Answer submission button...
+                # This line is to add style to button texts.
+                buttonFont = font.Font(size=12, weight='bold')
+                btnNextLevel = Button(wordle_screen, text="Next Level", font="buttonFont",
+                                      width=10, height=1, bg="dark green", fg="magenta")
+                btnNextLevel.place(relx=0.0, rely=1.0, anchor='sw')
+                btnNextLevel.pack()
+                btnNextLevel.config(command=self.fnNextLevel)
+            else:
+                # Destroying previous label(because I can't print label six times. So destroying previous label and then overriding next label.)
+                submitButton.destroy()
+                tmpLabel.destroy()
+                tmpLabel = Label(
+                    wordle_screen, text="Incorrect Answer. You lose this game. No Attempts Remain.", fg="green", font=("calibri", 11))
+                tmpLabel.pack()
+
+                # Calling function to get correct answer.
+                self.finalWord = self.getCorrectAnswer()
+
+                # Printing correct answer.
+                Label(wordle_screen, text="Correct Answer Is...",
+                      fg="blue", font=("calibri", 15)).pack()
+                Label(wordle_screen, text=self.finalWord,
+                      fg="blue", font=("calibri", 15)).pack()
+
+                # Answer submission button...
+                # This line is to add style to button texts.
+                buttonFont = font.Font(size=12, weight='bold')
+                btnNextLevel = Button(wordle_screen, text="Next Level", font="buttonFont",
+                                      width=10, height=1, bg="dark green", fg="magenta")
+                btnNextLevel.place(relx=0.0, rely=1.0, anchor='sw')
+                btnNextLevel.pack()
+                btnNextLevel.config(command=self.fnNextLevel)
+                tempCount = 1
 
 
-class GameMainClass:
+    def fnNextLevel(self):
+        global wordle_screen
+        wordle_screen.destroy()
+        self.wordle_test()
+
+class GameMainClass(RegisterClass, LoginClass, UserAttemptClass, WordleClass):
     # Designing Main(first) window
-    def main_account_screen():
+    def main_account_screen(self):
         global main_screen
         main_screen = Tk()
         main_screen.geometry("350x500")
@@ -411,18 +939,17 @@ class GameMainClass:
         buttonFont = font.Font(size=12, weight='bold')
 
         Button(text="Login", font="buttonFont", height="2",
-               width="20", bg="blue", fg="magenta", command=LoginClass.login).pack()
+               width="20", bg="blue", fg="magenta", command=lambda:self.login()).pack()
         Label(text="").pack()
         button = Button(text="Register", font="buttonFont", height="2",
-                        width="20", bg="blue", fg="magenta", command=RegisterClass.register).pack()
+                        width="20", bg="blue", fg="magenta", command=lambda: self.register()).pack()
         main_screen.mainloop()
 
 
     # Starting wordle GAME UI--------
     # ----- Main wordle game UI for every attemts ------.
-    def wordle_test():
+    def wordle_test(self):
 
-        global username1  # This variable is used to display UserName.
         global nextlevelframe  # This frame to give next button.
         global tempCount
         tempCount = 1
@@ -477,7 +1004,7 @@ class GameMainClass:
         L1.pack(side=RIGHT, padx=3)
 
         # Printing username in top right corner.
-        tmpUserPrint = "Welcome " + '"' + username1 + '"'
+        tmpUserPrint = "Welcome " + '"' + self.username + '"'
         L7 = Label(wordle_screen, text=tmpUserPrint,
                    fg="#101057", font=("Calibri", 16))
         L7.place(relx=1.0, rely=0.0, anchor='ne')
@@ -493,41 +1020,34 @@ class GameMainClass:
             wordle_screen.destroy()
 
         logoutButton = Button(wordle_screen, font="buttonFont", text="Logout",
-                              fg="magenta", bg="#f7051d", borderwidth=1, command=fnLogout)
+                              fg="magenta", bg="#f7051d", borderwidth=2, relief="solid", command=fnLogout)
         logoutButton.place(relx=0.05, rely=0.97, anchor='sw')
         # End of Logout button code.
 
-        # Hint to setup
-        global hintLabel
-        global hintDisplayLabel
-
         # Calling this function to get New Final Word for this level.
-        finalWord = WordleClass.getNewFinalWord()
-        hint = finalWord[0]
+        self.finalWord = self.getNewFinalWord()
+        hint = self.finalWord[0]
         finalhint = "Today's word start from " + '"' + hint + '"'
 
-        hintLabel = Label(wordle_screen, text="Hint", width=6,
-                          fg="white", bg="#04c91f", height="1", font=("Calibri", 13))
-        hintLabel.place(relx=0.98, rely=0.24, anchor='ne')
+        self.hintLabel = Label(wordle_screen, text="Hint", width=6,
+                          fg="magenta", bg="white", height="1", font=("Calibri", 13))
+        self.hintLabel.place(rely=0.97, relx=0.97, x=0, y=0, anchor=SE)
 
-        hintDisplayLabel = Label(wordle_screen)
-        hintDisplayLabel.place(relx=0.76, rely=0.23, anchor='ne')
+        self.hintDisplayLabel = Label(wordle_screen)
+        self.hintDisplayLabel.place(rely=0.97, relx=0.80, x=0, y=0, anchor=SE)
 
         def on_enter(event):
-            global hintDisplayLabel
-            hintDisplayLabel.configure(
-                text=finalhint, fg="white", bg="#04c91f", height="1", font=("Calibri", 13))
+            self.hintDisplayLabel.configure(
+                text=finalhint, fg="magenta", bg="white", height="1", font=("Calibri", 13))
 
         def on_leave(enter):
-            global hintDisplayLabel
-            hintDisplayLabel.configure(text="", bg="#fafaf2")
+            self.hintDisplayLabel.configure(text="", bg="#fafaf2")
 
         # We can bind the key event using the Binding method in a tkinter application.
-        hintLabel.bind("<Enter>", on_enter)
-        hintLabel.bind("<Leave>", on_leave)
+        self.hintLabel.bind("<Enter>", on_enter)
+        self.hintLabel.bind("<Leave>", on_leave)
         # Whenever the key will be triggered, it will call a handler that will raise the specific operation for the key event.
         # End of the hint code.
-
 
 
         # --- Starting Wordle Game UI for FIRST row. ---.
@@ -746,601 +1266,11 @@ class GameMainClass:
         submitButton = Button(bottomframe, text="Submit", font="buttonFont",
                               width=10, height=1, bg="blue", fg="magenta")
         submitButton.pack(pady=20)
-        submitButton.config(command=UserAttemptClass.fnCheckAttemptNo)
+        submitButton.config(command=self.fnCheckAttemptNo)
         wordle_screen.mainloop()
 
     # -------- Function to check which attempt this is ----
 
-class UserAttemptClass(GameMainClass):
-    def fnCheckAttemptNo():
-        obj1=GameMainClass()
-        # Using global variables to access in this function.
-        global tmpLabel
-        global tempCount
-        global wordle_screen
-        global nextlevelframe
-        global tmpLabel
-        # End
-
-        # Checking attempt and then to check the user answer with final answer.
-        print(f"Attempt# = {tempCount}")
-        # --- For First attempt ----
-        if tempCount == 1:
-            row1e1_info = row1e1_entry.get()
-            row1e2_info = row1e2_entry.get()
-            row1e3_info = row1e3_entry.get()
-            row1e4_info = row1e4_entry.get()
-            row1e5_info = row1e5_entry.get()
-
-            row1e1_entry.config(state="disabled")
-            row1e2_entry.config(state="disabled")
-            row1e3_entry.config(state="disabled")
-            row1e4_entry.config(state="disabled")
-            row1e5_entry.config(state="disabled")
-
-            tmpAnswer = row1e1_info + row1e2_info + row1e3_info + row1e4_info + row1e5_info
-            print(f"User's answer = {tmpAnswer}")
-            greenList, yellowList, greyList = WordleClass.fnStoreUserInputList(
-                tmpAnswer)
-            print(greenList)
-            print(yellowList)
-            print(greyList)
-            # If we write loop like this, i becomes value rather than position.
-            for i in greenList:
-                if i == 1:
-                    row1e1_entry.configure(
-                        disabledbackground="green", state="disabled", disabledforeground="black")
-                if i == 2:
-                    row1e2_entry.configure(
-                        disabledbackground="green", state="disabled", disabledforeground="black")
-                if i == 3:
-                    row1e3_entry.configure(
-                        disabledbackground="green", state="disabled", disabledforeground="black")
-                if i == 4:
-                    row1e4_entry.configure(
-                        disabledbackground="green", state="disabled", disabledforeground="black")
-                if i == 5:
-                    row1e5_entry.configure(
-                        disabledbackground="green", state="disabled", disabledforeground="black")
-            for i in yellowList:
-                if i == 1:
-                    row1e1_entry.configure(
-                        disabledbackground="yellow", state="disabled", disabledforeground="black")
-                if i == 2:
-                    row1e2_entry.configure(
-                        disabledbackground="yellow", state="disabled", disabledforeground="black")
-                if i == 3:
-                    row1e3_entry.configure(
-                        disabledbackground="yellow", state="disabled", disabledforeground="black")
-                if i == 4:
-                    row1e4_entry.configure(
-                        disabledbackground="yellow", state="disabled", disabledforeground="black")
-                if i == 5:
-                    row1e5_entry.configure(
-                        disabledbackground="yellow", state="disabled", disabledforeground="black")
-            for i in greyList:
-                if i == 1:
-                    row1e1_entry.configure(
-                        disabledbackground="grey", state="disabled", disabledforeground="black")
-                if i == 2:
-                    row1e2_entry.configure(
-                        disabledbackground="grey", state="disabled", disabledforeground="black")
-                if i == 3:
-                    row1e3_entry.configure(
-                        disabledbackground="grey", state="disabled", disabledforeground="black")
-                if i == 4:
-                    row1e4_entry.configure(
-                        disabledbackground="grey", state="disabled", disabledforeground="black")
-                if i == 5:
-                    row1e5_entry.configure(
-                        disabledbackground="grey", state="disabled", disabledforeground="black")
-            # Checking if answer is correct or not.
-            if len(greenList) == 5:
-                submitButton.destroy()
-                tmpLabelcorrect = Label(
-                    wordle_screen, text="Congratulations! Your Answer is CORRECT.", fg="green", font=("calibri", 11))
-                tmpLabelcorrect.pack()
-
-                # Answer submission button...
-                # This line is to add style to button texts.
-                buttonFont = font.Font(size=12, weight='bold')
-                btnNextLevel = Button(wordle_screen, text="Next Level", font="buttonFont",
-                                      width=10, height=1, bg="dark green", fg="magenta")
-                btnNextLevel.place(relx=0.0, rely=1.0, anchor='sw')
-                btnNextLevel.pack()
-                btnNextLevel.config(command=UserAttemptClass.fnNextLevel)
-            else:
-                tmpLabel = Label(
-                    wordle_screen, text="Incorrect Answer. Try Again.", fg="green", font=("calibri", 11))
-                tmpLabel.pack()
-                tempCount += 1
-
-        # --- For second attempt ----
-        elif tempCount == 2:
-            row2e1_info = row2e1_entry.get()
-            row2e2_info = row2e2_entry.get()
-            row2e3_info = row2e3_entry.get()
-            row2e4_info = row2e4_entry.get()
-            row2e5_info = row2e5_entry.get()
-
-            row2e1_entry.config(state="disabled")
-            row2e2_entry.config(state="disabled")
-            row2e3_entry.config(state="disabled")
-            row2e4_entry.config(state="disabled")
-            row2e5_entry.config(state="disabled")
-
-            tmpAnswer = row2e1_info + row2e2_info + row2e3_info + row2e4_info + row2e5_info
-            print(f"User's answer = {tmpAnswer}")
-            greenList, yellowList, greyList = WordleClass.fnStoreUserInputList(
-                tmpAnswer)
-            print(greenList)
-            print(yellowList)
-            print(greyList)
-            for i in greenList:
-                if i == 1:
-                    row2e1_entry.configure(
-                        disabledbackground="green", state="disabled", disabledforeground="black")
-                if i == 2:
-                    row2e2_entry.configure(
-                        disabledbackground="green", state="disabled", disabledforeground="black")
-                if i == 3:
-                    row2e3_entry.configure(
-                        disabledbackground="green", state="disabled", disabledforeground="black")
-                if i == 4:
-                    row2e4_entry.configure(
-                        disabledbackground="green", state="disabled", disabledforeground="black")
-                if i == 5:
-                    row2e5_entry.configure(
-                        disabledbackground="green", state="disabled", disabledforeground="black")
-            for i in yellowList:
-                if i == 1:
-                    row2e1_entry.configure(
-                        disabledbackground="yellow", state="disabled", disabledforeground="black")
-                if i == 2:
-                    row2e2_entry.configure(
-                        disabledbackground="yellow", state="disabled", disabledforeground="black")
-                if i == 3:
-                    row2e3_entry.configure(
-                        disabledbackground="yellow", state="disabled", disabledforeground="black")
-                if i == 4:
-                    row2e4_entry.configure(
-                        disabledbackground="yellow", state="disabled", disabledforeground="black")
-                if i == 5:
-                    row2e5_entry.configure(
-                        disabledbackground="yellow", state="disabled", disabledforeground="black")
-            for i in greyList:
-                if i == 1:
-                    row2e1_entry.configure(
-                        disabledbackground="grey", state="disabled", disabledforeground="black")
-                if i == 2:
-                    row2e2_entry.configure(
-                        disabledbackground="grey", state="disabled", disabledforeground="black")
-                if i == 3:
-                    row2e3_entry.configure(
-                        disabledbackground="grey", state="disabled", disabledforeground="black")
-                if i == 4:
-                    row2e4_entry.configure(
-                        disabledbackground="grey", state="disabled", disabledforeground="black")
-                if i == 5:
-                    row2e5_entry.configure(
-                        disabledbackground="grey", state="disabled", disabledforeground="black")
-            # Checking if answer is correct or not.
-            tmpLabel.destroy()
-            if len(greenList) == 5:
-                submitButton.destroy()
-                tmpLabelcorrect = Label(
-                    wordle_screen, text="Congratulations! Your Answer is CORRECT.", fg="green", font=("calibri", 11))
-                tmpLabelcorrect.pack()
-
-                # Answer submission button...
-                # This line is to add style to button texts.
-                buttonFont = font.Font(size=12, weight='bold')
-                btnNextLevel = Button(wordle_screen, text="Next Level", font="buttonFont",
-                                      width=10, height=1, bg="dark green", fg="magenta")
-                btnNextLevel.place(relx=0.0, rely=1.0, anchor='sw')
-                btnNextLevel.pack()
-                btnNextLevel.config(command=UserAttemptClass.fnNextLevel)
-            else:
-                tmpLabel.destroy()
-                tmpLabel = Label(
-                    wordle_screen, text="Incorrect Answer. Try Again.", fg="green", font=("calibri", 11))
-                tmpLabel.pack()
-                tempCount += 1
-
-        # ----- For third attempt ------
-        elif tempCount == 3:
-            row3e1_info = row3e1_entry.get()
-            row3e2_info = row3e2_entry.get()
-            row3e3_info = row3e3_entry.get()
-            row3e4_info = row3e4_entry.get()
-            row3e5_info = row3e5_entry.get()
-
-            row3e1_entry.config(state="disabled")
-            row3e2_entry.config(state="disabled")
-            row3e3_entry.config(state="disabled")
-            row3e4_entry.config(state="disabled")
-            row3e5_entry.config(state="disabled")
-
-            tmpAnswer = row3e1_info + row3e2_info + row3e3_info + row3e4_info + row3e5_info
-            print(f"User's answer = {tmpAnswer}")
-            greenList, yellowList, greyList = WordleClass.fnStoreUserInputList(
-                tmpAnswer)
-            print(greenList)
-            print(yellowList)
-            print(greyList)
-            for i in greenList:
-                if i == 1:
-                    row3e1_entry.configure(
-                        disabledbackground="green", state="disabled", disabledforeground="black")
-                if i == 2:
-                    row3e2_entry.configure(
-                        disabledbackground="green", state="disabled", disabledforeground="black")
-                if i == 3:
-                    row3e3_entry.configure(
-                        disabledbackground="green", state="disabled", disabledforeground="black")
-                if i == 4:
-                    row3e4_entry.configure(
-                        disabledbackground="green", state="disabled", disabledforeground="black")
-                if i == 5:
-                    row3e5_entry.configure(
-                        disabledbackground="green", state="disabled", disabledforeground="black")
-            for i in yellowList:
-                if i == 1:
-                    row3e1_entry.configure(
-                        disabledbackground="yellow", state="disabled", disabledforeground="black")
-                if i == 2:
-                    row3e2_entry.configure(
-                        disabledbackground="yellow", state="disabled", disabledforeground="black")
-                if i == 3:
-                    row3e3_entry.configure(
-                        disabledbackground="yellow", state="disabled", disabledforeground="black")
-                if i == 4:
-                    row3e4_entry.configure(
-                        disabledbackground="yellow", state="disabled", disabledforeground="black")
-                if i == 5:
-                    row3e5_entry.configure(
-                        disabledbackground="yellow", state="disabled", disabledforeground="black")
-            for i in greyList:
-                if i == 1:
-                    row3e1_entry.configure(
-                        disabledbackground="grey", state="disabled", disabledforeground="black")
-                if i == 2:
-                    row3e2_entry.configure(
-                        disabledbackground="grey", state="disabled", disabledforeground="black")
-                if i == 3:
-                    row3e3_entry.configure(
-                        disabledbackground="grey", state="disabled", disabledforeground="black")
-                if i == 4:
-                    row3e4_entry.configure(
-                        disabledbackground="grey", state="disabled", disabledforeground="black")
-                if i == 5:
-                    row3e5_entry.configure(
-                        disabledbackground="grey", state="disabled", disabledforeground="black")
-            # Checking if answer is correct or not.
-            tmpLabel.destroy()
-            if len(greenList) == 5:
-                submitButton.destroy()
-                tmpLabelcorrect = Label(
-                    wordle_screen, text="Congratulations! Your Answer is CORRECT.", fg="green", font=("calibri", 11))
-                tmpLabelcorrect.pack()
-
-                # Answer submission button...
-                # This line is to add style to button texts.
-                buttonFont = font.Font(size=12, weight='bold')
-                btnNextLevel = Button(wordle_screen, text="Next Level", font="buttonFont",
-                                      width=10, height=1, bg="dark green", fg="magenta")
-                btnNextLevel.place(relx=0.0, rely=1.0, anchor='sw')
-                btnNextLevel.pack()
-                btnNextLevel.config(command=UserAttemptClass.fnNextLevel)
-            else:
-                tmpLabel.destroy()
-                tmpLabel = Label(
-                    wordle_screen, text="Incorrect Answer. Try Again.", fg="green", font=("calibri", 11))
-                tmpLabel.pack()
-                tempCount += 1
-
-        # Checking for FORTH attempt ----.
-        elif tempCount == 4:
-            row4e1_info = row4e1_entry.get()
-            row4e2_info = row4e2_entry.get()
-            row4e3_info = row4e3_entry.get()
-            row4e4_info = row4e4_entry.get()
-            row4e5_info = row4e5_entry.get()
-
-            row4e1_entry.config(state="disabled")
-            row4e2_entry.config(state="disabled")
-            row4e3_entry.config(state="disabled")
-            row4e4_entry.config(state="disabled")
-            row4e5_entry.config(state="disabled")
-
-            tmpAnswer = row4e1_info + row4e2_info + row4e3_info + row4e4_info + row4e5_info
-            print(f"User's answer = {tmpAnswer}")
-            greenList, yellowList, greyList = WordleClass.fnStoreUserInputList(
-                tmpAnswer)
-            print(greenList)
-            print(yellowList)
-            print(greyList)
-            for i in greenList:
-                if i == 1:
-                    row4e1_entry.configure(
-                        disabledbackground="green", state="disabled", disabledforeground="black")
-                if i == 2:
-                    row4e2_entry.configure(
-                        disabledbackground="green", state="disabled", disabledforeground="black")
-                if i == 3:
-                    row4e3_entry.configure(
-                        disabledbackground="green", state="disabled", disabledforeground="black")
-                if i == 4:
-                    row4e4_entry.configure(
-                        disabledbackground="green", state="disabled", disabledforeground="black")
-                if i == 5:
-                    row4e5_entry.configure(
-                        disabledbackground="green", state="disabled", disabledforeground="black")
-            for i in yellowList:
-                if i == 1:
-                    row4e1_entry.configure(
-                        disabledbackground="yellow", state="disabled", disabledforeground="black")
-                if i == 2:
-                    row4e2_entry.configure(
-                        disabledbackground="yellow", state="disabled", disabledforeground="black")
-                if i == 3:
-                    row4e3_entry.configure(
-                        disabledbackground="yellow", state="disabled", disabledforeground="black")
-                if i == 4:
-                    row4e4_entry.configure(
-                        disabledbackground="yellow", state="disabled", disabledforeground="black")
-                if i == 5:
-                    row4e5_entry.configure(
-                        disabledbackground="yellow", state="disabled", disabledforeground="black")
-            for i in greyList:
-                if i == 1:
-                    row4e1_entry.configure(
-                        disabledbackground="grey", state="disabled", disabledforeground="black")
-                if i == 2:
-                    row4e2_entry.configure(
-                        disabledbackground="grey", state="disabled", disabledforeground="black")
-                if i == 3:
-                    row4e3_entry.configure(
-                        disabledbackground="grey", state="disabled", disabledforeground="black")
-                if i == 4:
-                    row4e4_entry.configure(
-                        disabledbackground="grey", state="disabled", disabledforeground="black")
-                if i == 5:
-                    row4e5_entry.configure(
-                        disabledbackground="grey", state="disabled", disabledforeground="black")
-            # Checking if answer is correct or not.
-            tmpLabel.destroy()
-            if len(greenList) == 5:
-                submitButton.destroy()
-                tmpLabelcorrect = Label(
-                    wordle_screen, text="Congratulations! Your Answer is CORRECT.", fg="green", font=("calibri", 11))
-                tmpLabelcorrect.pack()
-
-                # Answer submission button...
-                # This line is to add style to button texts.
-                buttonFont = font.Font(size=12, weight='bold')
-                btnNextLevel = Button(wordle_screen, text="Next Level", font="buttonFont",
-                                      width=10, height=1, bg="dark green", fg="magenta")
-                btnNextLevel.place(relx=0.0, rely=1.0, anchor='sw')
-                btnNextLevel.pack()
-                btnNextLevel.config(command=UserAttemptClass.fnNextLevel)
-            else:
-                tmpLabel.destroy()
-                tmpLabel = Label(
-                    wordle_screen, text="Incorrect Answer. Try Again.", fg="green", font=("calibri", 11))
-                tmpLabel.pack()
-                tempCount += 1
-
-        # Checking for FIFTH attempt ----.
-        elif tempCount == 5:
-            row5e1_info = row5e1_entry.get()
-            row5e2_info = row5e2_entry.get()
-            row5e3_info = row5e3_entry.get()
-            row5e4_info = row5e4_entry.get()
-            row5e5_info = row5e5_entry.get()
-
-            row5e1_entry.config(state="disabled")
-            row5e2_entry.config(state="disabled")
-            row5e3_entry.config(state="disabled")
-            row5e4_entry.config(state="disabled")
-            row5e5_entry.config(state="disabled")
-
-            tmpAnswer = row5e1_info + row5e2_info + row5e3_info + row5e4_info + row5e5_info
-            print(f"User's answer = {tmpAnswer}")
-            greenList, yellowList, greyList = WordleClass.fnStoreUserInputList(
-                tmpAnswer)
-            print(greenList)
-            print(yellowList)
-            print(greyList)
-            for i in greenList:
-                if i == 1:
-                    row5e1_entry.configure(
-                        disabledbackground="green", state="disabled", disabledforeground="black")
-                if i == 2:
-                    row5e2_entry.configure(
-                        disabledbackground="green", state="disabled", disabledforeground="black")
-                if i == 3:
-                    row5e3_entry.configure(
-                        disabledbackground="green", state="disabled", disabledforeground="black")
-                if i == 4:
-                    row5e4_entry.configure(
-                        disabledbackground="green", state="disabled", disabledforeground="black")
-                if i == 5:
-                    row5e5_entry.configure(
-                        disabledbackground="green", state="disabled", disabledforeground="black")
-            for i in yellowList:
-                if i == 1:
-                    row5e1_entry.configure(
-                        disabledbackground="yellow", state="disabled", disabledforeground="black")
-                if i == 2:
-                    row5e2_entry.configure(
-                        disabledbackground="yellow", state="disabled", disabledforeground="black")
-                if i == 3:
-                    row5e3_entry.configure(
-                        disabledbackground="yellow", state="disabled", disabledforeground="black")
-                if i == 4:
-                    row5e4_entry.configure(
-                        disabledbackground="yellow", state="disabled", disabledforeground="black")
-                if i == 5:
-                    row5e5_entry.configure(
-                        disabledbackground="yellow", state="disabled", disabledforeground="black")
-            for i in greyList:
-                if i == 1:
-                    row5e1_entry.configure(
-                        disabledbackground="grey", state="disabled", disabledforeground="black")
-                if i == 2:
-                    row5e2_entry.configure(
-                        disabledbackground="grey", state="disabled", disabledforeground="black")
-                if i == 3:
-                    row5e3_entry.configure(
-                        disabledbackground="grey", state="disabled", disabledforeground="black")
-                if i == 4:
-                    row5e4_entry.configure(
-                        disabledbackground="grey", state="disabled", disabledforeground="black")
-                if i == 5:
-                    row5e5_entry.configure(
-                        disabledbackground="grey", state="disabled", disabledforeground="black")
-            # Checking if answer is correct or not.
-            tmpLabel.destroy()
-            if len(greenList) == 5:
-                submitButton.destroy()
-                tmpLabelcorrect = Label(
-                    wordle_screen, text="Congratulations! Your Answer is CORRECT.", fg="green", font=("calibri", 11))
-                tmpLabelcorrect.pack()
-
-                # Answer submission button...
-                # This line is to add style to button texts.
-                buttonFont = font.Font(size=12, weight='bold')
-                btnNextLevel = Button(wordle_screen, text="Next Level", font="buttonFont",
-                                      width=10, height=1, bg="dark green", fg="magenta")
-                btnNextLevel.place(relx=0.0, rely=1.0, anchor='sw')
-                btnNextLevel.pack()
-                btnNextLevel.config(command=UserAttemptClass.fnNextLevel)
-            else:
-                tmpLabel.destroy()
-                tmpLabel = Label(
-                    wordle_screen, text="Incorrect Answer. Try Again.", fg="green", font=("calibri", 11))
-                tmpLabel.pack()
-                tempCount += 1
-
-        # Checking for SIXTH attempt ----.
-        elif tempCount == 6:
-            row6e1_info = row6e1_entry.get()
-            row6e2_info = row6e2_entry.get()
-            row6e3_info = row6e3_entry.get()
-            row6e4_info = row6e4_entry.get()
-            row6e5_info = row6e5_entry.get()
-
-            row6e1_entry.config(state="disabled")
-            row6e2_entry.config(state="disabled")
-            row6e3_entry.config(state="disabled")
-            row6e4_entry.config(state="disabled")
-            row6e5_entry.config(state="disabled")
-
-            tmpAnswer = row6e1_info + row6e2_info + row6e3_info + row6e4_info + row6e5_info
-            print(f"User's answer = {tmpAnswer}")
-            greenList, yellowList, greyList = WordleClass.fnStoreUserInputList(
-                tmpAnswer)
-            print(greenList)
-            print(yellowList)
-            print(greyList)
-            for i in greenList:
-                if i == 1:
-                    row6e1_entry.configure(
-                        disabledbackground="green", state="disabled", disabledforeground="black")
-                if i == 2:
-                    row6e2_entry.configure(
-                        disabledbackground="green", state="disabled", disabledforeground="black")
-                if i == 3:
-                    row6e3_entry.configure(
-                        disabledbackground="green", state="disabled", disabledforeground="black")
-                if i == 4:
-                    row6e4_entry.configure(
-                        disabledbackground="green", state="disabled", disabledforeground="black")
-                if i == 5:
-                    row6e5_entry.configure(
-                        disabledbackground="green", state="disabled", disabledforeground="black")
-            for i in yellowList:
-                if i == 1:
-                    row6e1_entry.configure(
-                        disabledbackground="yellow", state="disabled", disabledforeground="black")
-                if i == 2:
-                    row6e2_entry.configure(
-                        disabledbackground="yellow", state="disabled", disabledforeground="black")
-                if i == 3:
-                    row6e3_entry.configure(
-                        disabledbackground="yellow", state="disabled", disabledforeground="black")
-                if i == 4:
-                    row6e4_entry.configure(
-                        disabledbackground="yellow", state="disabled", disabledforeground="black")
-                if i == 5:
-                    row6e5_entry.configure(
-                        disabledbackground="yellow", state="disabled", disabledforeground="black")
-            for i in greyList:
-                if i == 1:
-                    row6e1_entry.configure(
-                        disabledbackground="grey", state="disabled", disabledforeground="black")
-                if i == 2:
-                    row6e2_entry.configure(
-                        disabledbackground="grey", state="disabled", disabledforeground="black")
-                if i == 3:
-                    row6e3_entry.configure(
-                        disabledbackground="grey", state="disabled", disabledforeground="black")
-                if i == 4:
-                    row6e4_entry.configure(
-                        disabledbackground="grey", state="disabled", disabledforeground="black")
-                if i == 5:
-                    row6e5_entry.configure(
-                        disabledbackground="grey", state="disabled", disabledforeground="black")
-            # Checking if answer is correct or not.
-            tmpLabel.destroy()
-            if len(greenList) == 5:
-                submitButton.destroy()
-                tmpLabelcorrect = Label(
-                    wordle_screen, text="Congratulations! Your Answer is CORRECT.", fg="green", font=("calibri", 11))
-                tmpLabelcorrect.pack()
-
-                # Answer submission button...
-                # This line is to add style to button texts.
-                buttonFont = font.Font(size=12, weight='bold')
-                btnNextLevel = Button(wordle_screen, text="Next Level", font="buttonFont",
-                                      width=10, height=1, bg="dark green", fg="magenta")
-                btnNextLevel.place(relx=0.0, rely=1.0, anchor='sw')
-                btnNextLevel.pack()
-                btnNextLevel.config(command=UserAttemptClass.fnNextLevel)
-            else:
-                # Destroying previous label(because I can't print label six times. So destroying previous label and then overriding next label.)
-                submitButton.destroy()
-                tmpLabel.destroy()
-                tmpLabel = Label(
-                    wordle_screen, text="Incorrect Answer. You lose this game. No Attempts Remain.", fg="green", font=("calibri", 11))
-                tmpLabel.pack()
-
-                # Calling function to get correct answer.
-                finalWord = WordleClass.getCorrectAnswer()
-
-                # Printing correct answer.
-                Label(wordle_screen, text="Correct Answer Is...",
-                      fg="blue", font=("calibri", 15)).pack()
-                Label(wordle_screen, text=finalWord,
-                      fg="blue", font=("calibri", 15)).pack()
-
-                # Answer submission button...
-                # This line is to add style to button texts.
-                buttonFont = font.Font(size=12, weight='bold')
-                btnNextLevel = Button(wordle_screen, text="Next Level", font="buttonFont",
-                                      width=10, height=1, bg="dark green", fg="magenta")
-                btnNextLevel.place(relx=0.0, rely=1.0, anchor='sw')
-                btnNextLevel.pack()
-                btnNextLevel.config(command=UserAttemptClass.fnNextLevel)
-                tempCount = 1
-
-
-    def fnNextLevel():
-        global wordle_screen
-        wordle_screen.destroy()
-        GameMainClass.wordle_test()
-
-
 # Calling main account function. Beginning Page.8
-GameMainClass.main_account_screen()
+tmpObj = GameMainClass()
+tmpObj.main_account_screen()
