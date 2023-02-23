@@ -1,3 +1,14 @@
+Wordle Game 
+
+
+Implemented the wordle game with the features including User registration, User login, play wordle Game, Get Hint for The Word Of The Day, Go to Next Level on Success, Check Result.
+
+
+Technology Stack: Python, Object-Oriented-Programming, Tkinter, OS File System, MySQL 
+
+
+
+
 # Wordle-using-Python-Tkinter
 
 What Is Wordle and How to Play? 
